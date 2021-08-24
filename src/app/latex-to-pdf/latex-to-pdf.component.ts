@@ -1,13 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { FlaskService } from './services/flask.service';
 import { debounceTime, switchMap } from 'rxjs/operators';
-import { DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import { HttpClient } from '@angular/common/http';
-import {exampleText} from './example'
 import { Observable, Subject } from 'rxjs';
-import {pdfTemplateOutput } from './latex2pdfInterface';
+import {pdfTemplateOutput, URLS } from './latex2pdfInterface';
 import { UrlHandlerService } from './services/url-handler.service';
+import { WordProcessorService } from './services/word-processor.service';
 
 @Component({
   selector: 'app-latex-to-pdf',
@@ -15,24 +12,26 @@ import { UrlHandlerService } from './services/url-handler.service';
   styleUrls: ['./latex-to-pdf.component.scss']
 })
 export class LatexToPDFComponent implements OnInit {
-
-  coverLetterContent : string = exampleText;
-  currentProjectPath : SafeUrl;
-  projectPathToDelete : string;
+  coverLetterContent : string;
   keyWords: { [key: string]: string } = {};
   keyWord = "";
-  pdfPath: string;
   key: string;
   keywordSelected = false;
   templateUpdater = new Subject();
   observableTemplate$: Observable<any>
 
-  constructor(private flask: FlaskService, private fb: FormBuilder,
-              public sanitizer: DomSanitizer, public http:HttpClient,
-              private urlHandler : UrlHandlerService ) {
-    /* Delete user project when closing the browser  */
+  Urls = <URLS>{};
+
+  constructor(private flask: FlaskService,
+              private urlHandler : UrlHandlerService,
+              public wordProcessor : WordProcessorService) {
+      this.cleanUserProject();
+   }
+
+   cleanUserProject() : void {
+     /* Delete user project when closing the browser  */
     window.onbeforeunload = ()=>{
-      navigator.sendBeacon(this.projectPathToDelete);
+      navigator.sendBeacon(this.Urls.projectPathToDelete);
     }
    }
 
@@ -41,39 +40,15 @@ export class LatexToPDFComponent implements OnInit {
     this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(300),
     switchMap(() => this.flask.updateTemplate(this.coverLetterContent,
                                               this.keyWords,
-                                              this.pdfPath)))
+                                              this.Urls.pdfPath)))
 
     this.observableTemplate$.subscribe((x : pdfTemplateOutput) : void => {
       if (!x.success) {
         alert("You are using symbols that currently don't work.")
         return;
       }
-      this.pdfPath = x.pdfPath
-      this.currentProjectPath = this.urlHandler.readPDFPath(x.pdfPath);
-      this.projectPathToDelete = this.urlHandler.deletePDFPath(x.pdfPath);
+      this.Urls = this.urlHandler.updateUrls(x);
     });
-  }
-
-  initPDF() : void {
-    /* Send the users template to render the initial PDF */
-    this.flask.addTemplate(this.coverLetterContent).subscribe((x:pdfTemplateOutput) => {
-      if (!x.success) {
-        alert("Your template contains symbols not compatible yet.")
-        return;
-      }
-      this.pdfPath = x.pdfPath;
-      this.currentProjectPath = this.urlHandler.readPDFPath(x.pdfPath);
-      this.projectPathToDelete = this.urlHandler.deletePDFPath(x.pdfPath);
-      this.getKeywords(x.keyWords);
-    });
-
-  }
-
-  getKeywords(keyWords : string[]) : void {
-    /* Gather all keywords that the user have added */
-      for (let w of keyWords) {
-        this.keyWords[w] = this.stripKeywordSeparator(w);
-      }
   }
 
   selectKeyword(key : string) : void {
@@ -83,18 +58,28 @@ export class LatexToPDFComponent implements OnInit {
     this.key = key;
   }
 
-  updatePDF(e) : void {
+  updatePDF() : void {
     /* Update the PDF with the modified keywords */
     this.keyWords[this.key] = this.keyWord
     this.templateUpdater.next();
   }
 
-  stripKeywordSeparator(w: string) : string {
-    /* Strip away all keyword selectors */
-    return w.replaceAll("@", "")
+  addUrls(e: URLS) : void {
+    /* Update project URLS */
+    this.Urls = e;
   }
 
-  ngOnDestroy() {
+  addKeywords(e : { [key: string]: string }) : void {
+    /* Update projects keywords */
+    this.keyWords = e;
+  }
+
+  addCoverLetterContent(e : string) : void {
+    /* Update cover letter content */
+    this.coverLetterContent = e;
+  }
+
+  ngOnDestroy() : void {
     /* Clean up subject */
     this.templateUpdater.unsubscribe();
   }

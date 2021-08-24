@@ -16,6 +16,7 @@ import {MatInputModule} from '@angular/material/input';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { LatexToPDFComponent } from './latex-to-pdf/latex-to-pdf.component';
+import { AddTemplateComponent } from './latex-to-pdf/add-template/add-template.component';
 
 
 
@@ -23,7 +24,8 @@ import { LatexToPDFComponent } from './latex-to-pdf/latex-to-pdf.component';
 @NgModule({
   declarations: [
     AppComponent,
-    LatexToPDFComponent
+    LatexToPDFComponent,
+    AddTemplateComponent
   ],
   imports: [
     FlexLayoutModule,

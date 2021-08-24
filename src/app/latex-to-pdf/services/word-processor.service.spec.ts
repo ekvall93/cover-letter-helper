@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { FlaskService } from './flask.service';
+import { WordProcessorService } from './word-processor.service';
 
-describe('FlaskService', () => {
-  let service: FlaskService;
+describe('WordProcessorService', () => {
+  let service: WordProcessorService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(FlaskService);
+    service = TestBed.inject(WordProcessorService);
   });
 
   it('should be created', () => {
