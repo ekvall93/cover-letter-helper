@@ -1,33 +1,4 @@
 <div class="container">
-
-  <app-add-template *ngIf="!this.Urls.currentProjectPath" (newUrlsEvent)="addUrls($event)" (newKeywordsEvent)="addKeywords($event)" (newCoverLetterContent)="addCoverLetterContent($event)"></app-add-template>
-
-  <div *ngIf="this.Urls.currentProjectPath" style="flex:1;" fxLayout="column">
-      <div fxFlex="80">
-        <div style="height:100%" fxLayout="row">
-          <div fxFlex="20">
-            <mat-selection-list [multiple]="false">
-              <mat-list-option *ngFor="let word of keyWords | keyvalue" (click)="selectKeyword(word.key)">
-                <b>{{wordProcessor.stripKeywordSeparator(word.key)}}</b> : {{word.value}}
-              </mat-list-option>
-            </mat-selection-list>
-          </div>
-          <div fxFlex="80">
-            <iframe id="pdfIframe" style="width:100%; height:100%" [attr.src]="this.Urls.currentProjectPath| safe"></iframe>
-          </div>
-        </div>
-    </div>
-
-    <div fxFlex="20">
-      <div style="height:100%;width:100%" fxLayout="row" fxLayoutAlign="center center" >
-        <form class="example-form">
-          <mat-form-field class="example-full-width" appearance="fill">
-            <mat-label>Change keyword</mat-label>
-            <input matInput [disabled]="!keywordSelected" [(ngModel)]="keyWord" (input)="updatePDF()">
-          </mat-form-field>
-        </form>
-      </div>
-    </div>
-
-</div>
+  <app-add-template style="height:100%;min-height:100%" *ngIf="!this.Urls.currentProjectPath" (newUrlsEvent)="addUrls($event)" (newKeywordsEvent)="addKeywords($event)" (newCoverLetterContent)="addCoverLetterContent($event)"></app-add-template>
+  <app-edit-pdf style="height:100%;min-height:100%" *ngIf="this.Urls.currentProjectPath" [Urls]="Urls" [keyWords]="keyWords" [coverLetterContent]="coverLetterContent"></app-edit-pdf>
 </div>

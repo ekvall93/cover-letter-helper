@@ -17,6 +17,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { LatexToPDFComponent } from './latex-to-pdf/latex-to-pdf.component';
 import { AddTemplateComponent } from './latex-to-pdf/add-template/add-template.component';
+import { EditPDFComponent } from './latex-to-pdf/edit-pdf/edit-pdf.component';
 
 
 
@@ -25,7 +26,8 @@ import { AddTemplateComponent } from './latex-to-pdf/add-template/add-template.c
   declarations: [
     AppComponent,
     LatexToPDFComponent,
-    AddTemplateComponent
+    AddTemplateComponent,
+    EditPDFComponent
   ],
   imports: [
     FlexLayoutModule,
