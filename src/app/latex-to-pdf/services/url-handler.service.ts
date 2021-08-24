@@ -16,7 +16,7 @@ export class UrlHandlerService {
   }
 
   deletePDFPath(path : string): string {
-    return this.apiUrl + deletePDFapi + path;
+    return this.apiUrl + deletePDFapi + "/?path=" + btoa(path);
   }
 
   initiateUrls(x : pdfTemplateOutput) : URLS {

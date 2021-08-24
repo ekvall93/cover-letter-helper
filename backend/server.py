@@ -26,9 +26,11 @@ def readPDF(path)->IO[bytes]:
   pdf = open(pdfPath, 'rb')
   return send_file(pdf, "test.pdf")
 
-@app.route('/api/deletePDF/<path:path>', methods=['GET', 'POST'])
-def deletePDF(path: pathlib.Path)->str:
+@app.route('/api/deletePDF/', methods=['GET', 'POST', 'PUT'])
+def deletePDF()->str:
   """Delete project"""
+  path_bas64 = request.args.get('path')
+  path = base64.b64decode(path_bas64).decode("utf-8")
   fileHandler.deleteFolder(path)
   return "Success"
 

@@ -9,6 +9,6 @@ export class WordProcessorService {
 
   stripKeywordSeparator(w: string) : string {
     /* Strip away all keyword selectors */
-    return w.replaceAll("@", "")
+    return w.replaceAll("?@", "")
   }
 }

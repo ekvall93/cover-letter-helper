@@ -11,32 +11,35 @@ class InitialProject(TypedDict):
 class UpdatedProject(TypedDict):s
     pdfPath: str """
 
+keywordSelector = "?@"
+
 texFile = r'''
           \documentclass{article}
           \usepackage[utf8]{inputenc}
           \usepackage{geometry}
+          \usepackage{color, soul}
           \newgeometry{vmargin={40mm}, hmargin={30mm,30mm}}
 
-          \title{Cover letter -- @company@}
-          \author{@author@}
+          \title{Cover letter -- ?@company?@}
+          \author{?@author?@}
           \begin{document}
           \pagenumbering{gobble}
           \maketitle
 
-          @TEXT@
+          ?@TEXT?@
           \newline
 
           \noindent
           Yours sincerly,
 
           \noindent
-          @author@
+          ?@author?@
 
 
           \end{document}
         '''
 
-reserved_keywords = ["@company@", "@author@"]
+reserved_keywords = ["?@company?@", "?@author?@"]
 
 specialCharsDict = {"\\" : "\\textbackslash ",
                          "%" : "\%",

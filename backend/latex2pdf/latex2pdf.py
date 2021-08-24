@@ -10,10 +10,12 @@ import re
 import tempfile
 import shutil
 import pdfkit
-from .constants import texFile, reserved_keywords, specialCharsDict, pdfFileName, texFileName
+from .constants import texFile, reserved_keywords, specialCharsDict, pdfFileName, texFileName, keywordSelector
 from typing import List, Dict, Union
 import pathlib
+import random
 config = pdfkit.configuration(wkhtmltopdf="/usr/local/bin/wkhtmltopdf")
+
 
 class TextHandler:
   """Handles the text used for Latex and for PDF"""
@@ -21,6 +23,12 @@ class TextHandler:
     self.reserved_keywords = reserved_keywords
     self.specialCharsDict = specialCharsDict
     self.specialChars = list(self.specialCharsDict.keys())
+
+  def highLightKeywords(self, template):
+    keyWords = list(set(re.findall(r'\?@.*?\?@', template)))
+    for k in keyWords:
+      template = template.replace(k, "\hl{" + k + "}")
+    return template
 
   def clean_template(self, paragraphs: List[str])->List[str]:
     """Clean paragraphs from special symbols"""
@@ -42,12 +50,12 @@ class TextHandler:
     template = self.clean_template(template)
     template = '\\newline \n \n \\noindent \n'.join(template)
     template = "\\noindent \n " + template
-    template = texFile.replace("@TEXT@", template)
+    template = texFile.replace("?@TEXT?@", template)
     return template
 
   def getKeyWords(self, template: str)->List[str]:
     """Find all keywords in the user's template text"""
-    keyWords = re.findall(r'\@.*?\@', template)
+    keyWords = re.findall(r'\?@.*?\?@', template)
     keyWords += self.reserved_keywords
     keyWords = list(set(keyWords))
     return keyWords
@@ -148,8 +156,11 @@ class FileHandler(Latex2PDFConverter):
   def deleteFolder(self, path: pathlib.Path)->None:
     """Delete folder"""
     dir_path = os.path.dirname(path)
-    dir_path = self.checkFolderEnd(dir_path)
-    shutil.rmtree(dir_path)
+    #dir_path = self.checkFolderEnd(dir_path)
+    if os.path.isdir(dir_path):
+      shutil.rmtree(dir_path)
+    else:
+      print(f"{dir_path} is not a path")
 
 class Latex2PDF(TextHandler, FileHandler):
   """Converts the the Latex file into PDF"""
@@ -159,32 +170,34 @@ class Latex2PDF(TextHandler, FileHandler):
     self._texFileName = texFileName
     self._pdfFileName = pdfFileName
 
-  def createProject(self, template: str)->pathlib.Path:
+  def createProjectPaths(self, template: str)->Dict[str,pathlib.Path]:
     """Creates project by creating working dir, fix latex file, and create a PDF"""
-    projectPath = self.createTmpDir()
-    pdfPath = self.createDir(projectPath, "0")
-    coverFile, coverPDF = self.getFilePath(pdfPath, self._texFileName), self.getFilePath(pdfPath, self._pdfFileName)
-    self.writeFile(pdfPath, self._texFileName, template)
-    self.convertLatex(pdfPath, coverFile)
-    return projectPath, coverPDF
+    pathsDict = dict()
+    pathsDict["projectPath"] = self.createTmpDir()
+    pathsDict["pdfPath"] = self.createDir(pathsDict["projectPath"], str(random.getrandbits(128)))
+    pathsDict["coverFile"], pathsDict["coverPDF"] = self.getFilePath(pathsDict["pdfPath"], self._texFileName), self.getFilePath(pathsDict["pdfPath"], self._pdfFileName)
+    return pathsDict
 
-  def updatePDFFolder(self, template: str, pdfPath: pathlib.Path, projectPath: pathlib.Path)->pathlib.Path:
+  def updatePDFFolderPaths(self, template: str, projectPath: pathlib.Path)->Dict[str,pathlib.Path]:
     """Creates project by creating working dir, fix latex file, and create a PDF"""
-    path = pathlib.PurePath(pdfPath)
-    pdfFolder = path.parent.name
-    pdfPath = self.createDir(projectPath, str(int(pdfFolder) + 1))
-    coverFile, coverPDF = self.getFilePath(pdfPath, self._texFileName), self.getFilePath(pdfPath, self._pdfFileName)
-    self.writeFile(pdfPath, self._texFileName, template)
-    self.convertLatex(pdfPath, coverFile)
-    return coverPDF
+    pathsDict = dict()
+    pathsDict["pdfPath"] = self.createDir(projectPath, str(random.getrandbits(128)))
+    pathsDict["coverFile"], pathsDict["coverPDF"] = self.getFilePath(pathsDict["pdfPath"], self._texFileName), self.getFilePath(pathsDict["pdfPath"], self._pdfFileName)
+    #self.writeFile(pdfPath, self._texFileName, template)
+    #self.convertLatex(pdfPath, coverFile)
+    return pathsDict
 
   def initProject(self, template: str)->Dict[str, Union[pathlib.Path, List[str]]]:
     """Initiate project for user"""
     try:
       template = self.addMainText(template)
-      projectPath, coverPDF = self.createProject(template)
-      self.writeFile(projectPath, "template.txt", template)
-      return {"success" : True, "pdfPath" : coverPDF, "projectPath": projectPath, "keyWords": self.getKeyWords(template)}
+      pathsDict = self.createProjectPaths(template)
+      self.writeFile(pathsDict["projectPath"], "template.txt", template)
+      #Highlight keywords after saving template
+      template = self.highLightKeywords(template)
+      self.writeFile(pathsDict["pdfPath"], self._texFileName, template)
+      self.convertLatex(pathsDict["pdfPath"], pathsDict["coverFile"])
+      return {"success" : True, "pdfPath" : pathsDict["coverPDF"], "projectPath": pathsDict["projectPath"], "keyWords": self.getKeyWords(template)}
     except Exception as e:
       print(e)
       return {"success" : False}
@@ -194,15 +207,22 @@ class Latex2PDF(TextHandler, FileHandler):
     pdfPath, projectPath = URLS["pdfPath"], URLS["projectPath"]
     template = self.readFile(projectPath, "template.txt")
     for k, v in keyWords.items():
-      if k.strip("@") != v:
+      if k.strip("?@") != v:
         clean_word = self.cleanWord(v)
-        template = template.replace(k, clean_word)
+        template = template.replace(k, "\hl{" + clean_word + "}")
+    template = self.highLightKeywords(template)
+    pathsDict = self.updatePDFFolderPaths(template, projectPath)
+
     try:
-      path = self.updatePDFFolder(template, pdfPath, projectPath)
+      self.writeFile(pathsDict["pdfPath"], self._texFileName, template)
+      self.convertLatex(pathsDict["pdfPath"], pathsDict["coverFile"])
       #Succeeded compiling latex, delete old project
+      print(pathsDict["pdfPath"], pdfPath)
       self.deleteFolder(pdfPath)
-      return {"success" : True, "pdfPath" : path}
+      return {"success" : True, "pdfPath" : pathsDict["pdfPath"]}
     except Exception as e:
+      print(e)
+      self.deleteFolder(pathsDict["pdfPath"])
       #Failed to compile latex, use old dir
       return {"success" : False, "pdfPath" : pdfPath}
 
