@@ -22,6 +22,7 @@
           <mat-label>Change keyword</mat-label>
           <input matInput [disabled]="!keywordSelected" [(ngModel)]="keyWord" (input)="updatePDF()">
         </mat-form-field>
+        <button mat-raised-button color="primary" (click)="useHighlight=!useHighlight;updatePDF()">Highlight</button>
       </form>
     </div>
   </div>

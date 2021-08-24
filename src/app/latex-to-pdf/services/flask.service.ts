@@ -14,7 +14,7 @@ export class FlaskService {
     return this.httpClient.put<string[]>(this.url + 'Latex2PDFHandler/', JSON.stringify({ initProject:true, template }));
   }
 
-  updateTemplate(keyWords, URLS): any {
-    return this.httpClient.put<string[]>(this.url + 'Latex2PDFHandler/', JSON.stringify({ initProject:false, keyWords , URLS}));
+  updateTemplate(useHighlight, keyWords, URLS): any {
+    return this.httpClient.put<string[]>(this.url + 'Latex2PDFHandler/', JSON.stringify({ initProject:false, useHighlight, keyWords , URLS}));
   }
 }

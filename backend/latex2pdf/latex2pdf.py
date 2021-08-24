@@ -202,15 +202,16 @@ class Latex2PDF(TextHandler, FileHandler):
       print(e)
       return {"success" : False}
 
-  def updateProject(self, keyWords: Dict[str, str], URLS: Dict[str,pathlib.Path])->Dict[str, pathlib.Path]:
+  def updateProject(self, useHighlight:bool, keyWords: Dict[str, str], URLS: Dict[str,pathlib.Path])->Dict[str, pathlib.Path]:
     """Update project for user"""
     pdfPath, projectPath = URLS["pdfPath"], URLS["projectPath"]
     template = self.readFile(projectPath, "template.txt")
     for k, v in keyWords.items():
       if k.strip("?@") != v:
         clean_word = self.cleanWord(v)
-        template = template.replace(k, "\hl{" + clean_word + "}")
-    template = self.highLightKeywords(template)
+        template = template.replace(k, "\hl{" + clean_word + "}" if useHighlight else clean_word)
+    if useHighlight:
+      template = self.highLightKeywords(template)
     pathsDict = self.updatePDFFolderPaths(template, projectPath)
 
     try:
@@ -243,7 +244,7 @@ class Latex2PDFHandler(Resource, Latex2PDF):
       template = queryData['template']
       return self.initProject(template)
     else:
-      keyWords, URLS = queryData['keyWords'], queryData['URLS']
-      return self.updateProject(keyWords, URLS)
+      useHighlight, keyWords, URLS = queryData["useHighlight"], queryData['keyWords'], queryData['URLS']
+      return self.updateProject(useHighlight, keyWords, URLS)
 
 

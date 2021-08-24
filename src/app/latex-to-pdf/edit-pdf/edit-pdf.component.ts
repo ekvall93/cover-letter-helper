@@ -24,11 +24,12 @@ export class EditPDFComponent implements OnInit {
   key: string;
   templateUpdater = new Subject();
   observableTemplate$: Observable<any>;
+  useHighlight = true;
 
   ngOnInit(): void {
     /* Set Debouncer on the update on PDF to avoid spam */
     this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(debounceTimeValue),
-    switchMap(() => this.flask.updateTemplate(
+    switchMap(() => this.flask.updateTemplate(this.useHighlight,
                                               this.keyWords,
                                               this.Urls)))
 
@@ -51,7 +52,9 @@ export class EditPDFComponent implements OnInit {
 
   updatePDF() : void {
     /* Update the PDF with the modified keywords */
-    this.keyWords[this.key] = this.keyWord
+    if(this.key) {
+      this.keyWords[this.key] = this.keyWord
+    }
     this.templateUpdater.next();
   }
 
