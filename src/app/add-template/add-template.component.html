@@ -1,0 +1,41 @@
+<div class="container">
+
+
+  <h1> Copy-paste your config template here</h1>
+  <br>
+
+  <div *ngIf="!currentProjectPath">
+    <ngx-text-editor [placeholder]="'Enter text here...'" [spellcheck]="true" [(ngModel)]="coverLetterContent"></ngx-text-editor>
+    <br>
+    <button mat-raised-button color="primary" (click)="initPDF()">Primary</button>
+  </div>
+
+  <div *ngIf="currentProjectPath" style="flex:1;" fxLayout="column">
+      <div fxFlex="80">
+        <div style="height:100%" fxLayout="row">
+          <div fxFlex="20">
+            <mat-selection-list [multiple]="false">
+              <mat-list-option *ngFor="let word of keyWords | keyvalue" (click)="selectKeyword(word.key)">
+                <b>{{stripKeywordSeparator(word.key)}}</b> : {{word.value}}
+              </mat-list-option>
+            </mat-selection-list>
+          </div>
+          <div fxFlex="80">
+            <iframe id="pdfIframe" style="width:100%; height:100%" [attr.src]="this.currentProjectPath| safe"></iframe>
+          </div>
+        </div>
+    </div>
+
+    <div fxFlex="20">
+      <div style="height:100%;width:100%" fxLayout="row" fxLayoutAlign="center center" >
+        <form class="example-form">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Change keyword</mat-label>
+            <input matInput [disabled]="!keywordSelected" [(ngModel)]="keyWord" (input)="updatePDF($event)">
+          </mat-form-field>
+        </form>
+      </div>
+    </div>
+
+</div>
+</div>
