@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AddTemplateComponent } from './add-template/add-template.component';
 import { HttpClientModule } from '@angular/common/http';
 import {TextFieldModule} from '@angular/cdk/text-field';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -24,7 +23,6 @@ import { LatexToPDFComponent } from './latex-to-pdf/latex-to-pdf.component';
 @NgModule({
   declarations: [
     AppComponent,
-    AddTemplateComponent,
     LatexToPDFComponent
   ],
   imports: [
