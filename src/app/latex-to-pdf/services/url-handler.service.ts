@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { pdfTemplateOutput, URLS } from '../latex2pdfInterface';
+import {readPFDapi, deletePDFapi} from './../constants'
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -9,11 +12,11 @@ export class UrlHandlerService {
   constructor() { }
 
   readPDFPath(path : string): string {
-    return this.apiUrl + "readPDF" + path;
+    return this.apiUrl + readPFDapi + path;
   }
 
   deletePDFPath(path : string): string {
-    return this.apiUrl + "deletePDF" + path;
+    return this.apiUrl + deletePDFapi + path;
   }
 
   updateUrls(x : pdfTemplateOutput) : URLS {

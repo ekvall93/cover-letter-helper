@@ -1,6 +1,6 @@
 <div class="container">
 
-  <app-add-template *ngIf="!this.Urls.currentProjectPath" (newUrlsEvent)="addUrls($event)" (newKeywordsEvent)="addKeywords($event)"></app-add-template>
+  <app-add-template *ngIf="!this.Urls.currentProjectPath" (newUrlsEvent)="addUrls($event)" (newKeywordsEvent)="addKeywords($event)" (newCoverLetterContent)="addCoverLetterContent($event)"></app-add-template>
 
   <div *ngIf="this.Urls.currentProjectPath" style="flex:1;" fxLayout="column">
       <div fxFlex="80">

@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import {pdfTemplateOutput, URLS } from './latex2pdfInterface';
 import { UrlHandlerService } from './services/url-handler.service';
 import { WordProcessorService } from './services/word-processor.service';
+import {debounceTimeValue} from './constants'
 
 @Component({
   selector: 'app-latex-to-pdf',
@@ -37,7 +38,7 @@ export class LatexToPDFComponent implements OnInit {
 
   ngOnInit(): void {
     /* Set Debouncer on the update on PDF to avoid spam */
-    this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(300),
+    this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(debounceTimeValue),
     switchMap(() => this.flask.updateTemplate(this.coverLetterContent,
                                               this.keyWords,
                                               this.Urls.pdfPath)))
