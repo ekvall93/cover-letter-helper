@@ -4,6 +4,7 @@ export interface pdfTemplateOutput {
   pdfPath?: string;
   keyWords?: string[]
   success: boolean;
+  projectPath?: string;
 }
 
 export interface EditKeyword {
@@ -15,4 +16,5 @@ export interface URLS {
   currentProjectPath: SafeUrl;
   projectPathToDelete: string;
   pdfPath: string;
+  projectPath: string
 }

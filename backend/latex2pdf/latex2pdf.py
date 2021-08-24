@@ -85,7 +85,6 @@ class Latex2PDFConverter:
     if not retcode == 0:
         os.unlink(dirpath + pdfFileName)
         raise ValueError('Error {} executing command: {}'.format(retcode, ' '.join(cmd)))
-    #self._cleanConversionFiles(dirpath)
 
 class FileHandler(Latex2PDFConverter):
   """Handles all files and directories used in project"""
@@ -101,21 +100,39 @@ class FileHandler(Latex2PDFConverter):
       dirpath += "/"
     return dirpath
 
-  @staticmethod
-  def writeTexFile(coverFile: pathlib.Path, template: str)->None:
+  def createDir(self, path: pathlib.Path, folerName: str)->pathlib.Path:
+    """Create directory"""
+    path = os.path.join(path, folerName)
+    path = self.checkFolderEnd(path)
+    os.mkdir(path)
+    return path
+
+  def writeFile(self, path: pathlib.Path, filename: str, template: str)->None:
     """Write file"""
-    with open(coverFile,'w') as f:
+    path = self.getFilePath(path, filename)
+    with open(path,'w') as f:
       f.write(template)
 
   @staticmethod
-  def checkFolderStart(path):
+  def getFilePath(path: pathlib.Path, filename: str)->pathlib.Path:
+    """Get filename"""
+    return os.path.join(path, filename)
+
+  def readFile(self, path: pathlib.Path, filename: str)->str:
+    """Read file"""
+    path = self.getFilePath(path, filename)
+    f = open(path, "r")
+    return f.read()
+
+  @staticmethod
+  def checkFolderStart(path: pathlib.Path):
     """Check so that the folder starts with /"""
     if not path.startswith("/"):
       path = "/" + path
     return path
 
   @staticmethod
-  def checkFolderEnd(path):
+  def checkFolderEnd(path: pathlib.Path):
     """Check so that the folder ends with /"""
     if not path.endswith("/"):
       path = path + "/"
@@ -144,36 +161,50 @@ class Latex2PDF(TextHandler, FileHandler):
 
   def createProject(self, template: str)->pathlib.Path:
     """Creates project by creating working dir, fix latex file, and create a PDF"""
-    dirpath = self.createTmpDir()
-    coverFile, coverPDF = dirpath + self._texFileName, dirpath + self._pdfFileName
-    self.writeTexFile(coverFile, template)
-    self.convertLatex(dirpath, coverFile)
+    projectPath = self.createTmpDir()
+    pdfPath = self.createDir(projectPath, "0")
+    coverFile, coverPDF = self.getFilePath(pdfPath, self._texFileName), self.getFilePath(pdfPath, self._pdfFileName)
+    self.writeFile(pdfPath, self._texFileName, template)
+    self.convertLatex(pdfPath, coverFile)
+    return projectPath, coverPDF
+
+  def updatePDFFolder(self, template: str, pdfPath: pathlib.Path, projectPath: pathlib.Path)->pathlib.Path:
+    """Creates project by creating working dir, fix latex file, and create a PDF"""
+    path = pathlib.PurePath(pdfPath)
+    pdfFolder = path.parent.name
+    pdfPath = self.createDir(projectPath, str(int(pdfFolder) + 1))
+    coverFile, coverPDF = self.getFilePath(pdfPath, self._texFileName), self.getFilePath(pdfPath, self._pdfFileName)
+    self.writeFile(pdfPath, self._texFileName, template)
+    self.convertLatex(pdfPath, coverFile)
     return coverPDF
 
   def initProject(self, template: str)->Dict[str, Union[pathlib.Path, List[str]]]:
     """Initiate project for user"""
     try:
       template = self.addMainText(template)
-      return {"success" : True, "pdfPath" : self.createProject(template), "keyWords": self.getKeyWords(template)}
+      projectPath, coverPDF = self.createProject(template)
+      self.writeFile(projectPath, "template.txt", template)
+      return {"success" : True, "pdfPath" : coverPDF, "projectPath": projectPath, "keyWords": self.getKeyWords(template)}
     except Exception as e:
       print(e)
       return {"success" : False}
 
-  def updateProject(self, template: str, keyWords: Dict[str, str], pdfPath: pathlib.Path)->Dict[str, pathlib.Path]:
+  def updateProject(self, keyWords: Dict[str, str], URLS: Dict[str,pathlib.Path])->Dict[str, pathlib.Path]:
     """Update project for user"""
-    template = self.addMainText(template)
+    pdfPath, projectPath = URLS["pdfPath"], URLS["projectPath"]
+    template = self.readFile(projectPath, "template.txt")
     for k, v in keyWords.items():
       if k.strip("@") != v:
         clean_word = self.cleanWord(v)
         template = template.replace(k, clean_word)
     try:
-      path = self.createProject(template)
+      path = self.updatePDFFolder(template, pdfPath, projectPath)
       #Succeeded compiling latex, delete old project
       self.deleteFolder(pdfPath)
-      return {"success" : True, "pdfPath" : path }
+      return {"success" : True, "pdfPath" : path}
     except Exception as e:
       #Failed to compile latex, use old dir
-      return {"success" : False, "pdfPath" : pdfPath }
+      return {"success" : False, "pdfPath" : pdfPath}
 
 class Latex2PDFHandler(Resource, Latex2PDF):
   def __init__(self):
@@ -192,7 +223,7 @@ class Latex2PDFHandler(Resource, Latex2PDF):
       template = queryData['template']
       return self.initProject(template)
     else:
-      template, keyWords, pdfPath = queryData["template"], queryData['keyWords'], queryData['pdfPath']
-      return self.updateProject(template, keyWords, pdfPath)
+      keyWords, URLS = queryData['keyWords'], queryData['URLS']
+      return self.updateProject(keyWords, URLS)
 
 

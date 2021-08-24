@@ -14,7 +14,6 @@ import {exampleText} from './example'
 export class AddTemplateComponent implements OnInit {
   @Output() newUrlsEvent = new EventEmitter<URLS>();
   @Output() newKeywordsEvent = new EventEmitter<{ [key: string]: string }>();
-  @Output() newCoverLetterContent = new EventEmitter<string>();
   coverLetterContent : string = exampleText;
   Urls = <URLS>{};
   keyWords: { [key: string]: string } = {};
@@ -32,7 +31,7 @@ export class AddTemplateComponent implements OnInit {
         alert("Your template contains symbols not compatible yet.")
         return;
       }
-      this.Urls = this.urlHandler.updateUrls(x);
+      this.Urls = this.urlHandler.initiateUrls(x);
       this.keyWords = this.getKeywords(x.keyWords);
       this.sendItems();
     });
@@ -41,7 +40,6 @@ export class AddTemplateComponent implements OnInit {
   sendItems() : void {
     this.newUrlsEvent.emit(this.Urls);
     this.newKeywordsEvent.emit(this.keyWords);
-    this.newCoverLetterContent.emit(this.coverLetterContent);
   }
 
   getKeywords(keyWords : string[]) : { [key: string]: string } {

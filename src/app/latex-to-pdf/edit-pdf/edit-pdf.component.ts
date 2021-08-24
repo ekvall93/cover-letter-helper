@@ -15,7 +15,6 @@ import { WordProcessorService } from '../services/word-processor.service';
 export class EditPDFComponent implements OnInit {
   @Input() Urls : URLS;
   @Input() keyWords : { [key: string]: string };
-  @Input() coverLetterContent : string;
   constructor(public wordProcessor : WordProcessorService,
               private flask: FlaskService,
               private urlHandler: UrlHandlerService) { }
@@ -29,16 +28,16 @@ export class EditPDFComponent implements OnInit {
   ngOnInit(): void {
     /* Set Debouncer on the update on PDF to avoid spam */
     this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(debounceTimeValue),
-    switchMap(() => this.flask.updateTemplate(this.coverLetterContent,
+    switchMap(() => this.flask.updateTemplate(
                                               this.keyWords,
-                                              this.Urls.pdfPath)))
+                                              this.Urls)))
 
     this.observableTemplate$.subscribe((x : pdfTemplateOutput) : void => {
       if (!x.success) {
         alert("You are using symbols that currently don't work.")
         return;
       }
-      this.Urls = this.urlHandler.updateUrls(x);
+      this.Urls = this.urlHandler.updateUrls(x, this.Urls);
     });
   }
 

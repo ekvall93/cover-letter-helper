@@ -1,9 +1,11 @@
 <div class="container">
   <div>
-    <h1> Copy-paste your config template here</h1>
+    <div style="width: 100%; text-align: center;">
+      <h1> Copy-paste your config template here</h1>
+    </div>
     <br>
-    <ngx-text-editor [placeholder]="'Enter text here...'" [spellcheck]="true" [(ngModel)]="coverLetterContent"></ngx-text-editor>
+    <ngx-text-editor height="400px" minHeight="50px" [placeholder]="'Enter text here...'" [spellcheck]="true" [(ngModel)]="coverLetterContent"></ngx-text-editor>
     <br>
-    <button mat-raised-button color="primary" (click)="initPDF()">Primary</button>
+    <button mat-raised-button color="primary" (click)="initPDF()">Create PDF</button>
   </div>
 </div>

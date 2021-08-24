@@ -19,11 +19,18 @@ export class UrlHandlerService {
     return this.apiUrl + deletePDFapi + path;
   }
 
-  updateUrls(x : pdfTemplateOutput) : URLS {
+  initiateUrls(x : pdfTemplateOutput) : URLS {
     let Urls = <URLS>{};
     Urls.pdfPath = x.pdfPath;
     Urls.currentProjectPath = this.readPDFPath(x.pdfPath);
-    Urls.projectPathToDelete = this.deletePDFPath(x.pdfPath);
+    Urls.projectPath = x.projectPath;
+    Urls.projectPathToDelete = this.deletePDFPath(x.projectPath);
+    return Urls
+  }
+
+  updateUrls(x : pdfTemplateOutput, Urls: URLS) : URLS {
+    Urls.pdfPath = x.pdfPath;
+    Urls.currentProjectPath = this.readPDFPath(x.pdfPath);
     return Urls
   }
 }
