@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
-import { debounceTimeValue } from '../constants';
+import { debounceTimeValue, fonts, defaultStyle } from '../constants';
 import { pdfTemplateOutput, URLS } from '../latex2pdfInterface';
 import { FlaskService } from '../services/flask.service';
 import { UrlHandlerService } from '../services/url-handler.service';
@@ -18,7 +18,9 @@ export class EditPDFComponent implements OnInit {
   constructor(public wordProcessor : WordProcessorService,
               private flask: FlaskService,
               private urlHandler: UrlHandlerService) { }
-
+  style = defaultStyle;
+  font = "lmodern";
+  fonts = fonts;
   keywordSelected = false;
   keyWord: string = "";
   key: string;
@@ -29,7 +31,8 @@ export class EditPDFComponent implements OnInit {
   ngOnInit(): void {
     /* Set Debouncer on the update on PDF to avoid spam */
     this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(debounceTimeValue),
-    switchMap(() => this.flask.updateTemplate(this.useHighlight,
+    switchMap(() => this.flask.updateTemplate(this.style,
+                                              this.useHighlight,
                                               this.keyWords,
                                               this.Urls)))
 
@@ -39,6 +42,10 @@ export class EditPDFComponent implements OnInit {
         return;
       }
       this.Urls = this.urlHandler.updateUrls(x, this.Urls);
+      /* Don't need to update style no more */
+      if (this.style.update) {
+        this.style.update = false
+      }
     });
   }
 
@@ -56,6 +63,12 @@ export class EditPDFComponent implements OnInit {
       this.keyWords[this.key] = this.keyWord
     }
     this.templateUpdater.next();
+  }
+
+  updateFont() {
+    this.style.font = this.font;
+    this.style.update = true;
+    this.updatePDF();
   }
 
   ngOnDestroy() : void {

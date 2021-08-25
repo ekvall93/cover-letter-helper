@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { defaultStyle } from '../constants';
 import { pdfTemplateOutput, URLS } from '../latex2pdfInterface';
 import { FlaskService } from '../services/flask.service';
 import { UrlHandlerService } from '../services/url-handler.service';
@@ -26,7 +27,7 @@ export class AddTemplateComponent implements OnInit {
 
   initPDF() : void {
     /* Send the users template to render the initial PDF */
-    this.flask.addTemplate(this.coverLetterContent).subscribe((x:pdfTemplateOutput) => {
+    this.flask.addTemplate(this.coverLetterContent, defaultStyle).subscribe((x:pdfTemplateOutput) => {
       if (!x.success) {
         alert("Your template contains symbols not compatible yet.")
         return;

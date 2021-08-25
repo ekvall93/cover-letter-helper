@@ -23,6 +23,14 @@
           <input matInput [disabled]="!keywordSelected" [(ngModel)]="keyWord" (input)="updatePDF()">
         </mat-form-field>
         <button mat-raised-button color="primary" (click)="useHighlight=!useHighlight;updatePDF()">Highlight</button>
+        <mat-form-field appearance="fill">
+          <mat-label>Font</mat-label>
+          <mat-select [(ngModel)]="font" (ngModelChange)="updateFont()">
+            <mat-option *ngFor="let f of fonts" [value]="f.value">
+              {{f.viewValue}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </form>
     </div>
   </div>

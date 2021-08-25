@@ -16,43 +16,85 @@ defaultPaths = {"PDFDir": None, "projectDir": None, "texFile": None, "PDFFile": 
 
 keywordSelector = "?@"
 
-texCommand = r'''
-          \makeatletter
-          \renewcommand{\overset}[2]{\ensuremath{\mathop{\kern\z@\mbox{#2}}\limits^{\mbox{\scriptsize #1}}}}
-          \renewcommand{\underset}[2]{\ensuremath{\mathop{\kern\z@\mbox{#2}}\limits_{\mbox{\scriptsize #1}}}}
-          \makeatother
+
+class texTemplate:
+  @staticmethod
+  def getTexFile(font):
+    _texCommand = r'''
+              \makeatletter
+              \renewcommand{\overset}[2]{\ensuremath{\mathop{\kern\z@\mbox{#2}}\limits^{\mbox{\scriptsize #1}}}}
+              \renewcommand{\underset}[2]{\ensuremath{\mathop{\kern\z@\mbox{#2}}\limits_{\mbox{\scriptsize #1}}}}
+              \makeatother
+              '''
+    return  fr'''
+            \documentclass{{article}}
+            \usepackage[utf8]{{inputenc}}
+            \usepackage{{geometry}}
+            \usepackage{{color, soul}}
+            \usepackage{{lettrine}}
+            \usepackage{{amsmath}}
+            \usepackage[T1]{{fontenc}}
+            \usepackage{{{font}}}
+            \renewcommand{{\familydefault}}{{\sfdefault}}
+            {_texCommand}
+            \newgeometry{{vmargin={{40mm}}, hmargin={{30mm,30mm}}}}
+            \title{{Cover letter -- {keywordSelector}company{keywordSelector}}}
+            \author{{{keywordSelector}author{keywordSelector}}}
+            \begin{{document}}
+            \pagenumbering{{gobble}}
+            \maketitle
+
+            {keywordSelector}TEXT{keywordSelector}
+            \newline
+
+            \noindent
+            Yours sincerly,
+
+            \noindent
+            ?@author?@
+
+
+            \end{{document}}
           '''
 
-texFile = fr'''
-          \documentclass{{article}}
-          \usepackage[utf8]{{inputenc}}
-          \usepackage{{geometry}}
-          \usepackage{{color, soul}}
-          \usepackage{{lettrine}}
-          \usepackage{{amsmath}}
 
-          {texCommand}
-
-          \newgeometry{{vmargin={{40mm}}, hmargin={{30mm,30mm}}}}
-
-          \title{{Cover letter -- {keywordSelector}company{keywordSelector}}}
-          \author{{{keywordSelector}author{keywordSelector}}}
-          \begin{{document}}
-          \pagenumbering{{gobble}}
-          \maketitle
-
-          {keywordSelector}TEXT{keywordSelector}
-          \newline
-
-          \noindent
-          Yours sincerly,
-
-          \noindent
-          ?@author?@
+texCommand = r'''
+              \makeatletter
+              \renewcommand{\overset}[2]{\ensuremath{\mathop{\kern\z@\mbox{#2}}\limits^{\mbox{\scriptsize #1}}}}
+              \renewcommand{\underset}[2]{\ensuremath{\mathop{\kern\z@\mbox{#2}}\limits_{\mbox{\scriptsize #1}}}}
+              \makeatother
+              '''
 
 
-          \end{{document}}
-        '''
+texFile =   fr'''
+            \documentclass{{article}}
+            \usepackage[utf8]{{inputenc}}
+            \usepackage{{geometry}}
+            \usepackage{{color, soul}}
+            \usepackage{{lettrine}}
+            \usepackage{{amsmath}}
+            \usepackage[B1,LY1,T1]{{fontenc}}
+            \usepackage{{avant}}
+            {texCommand}
+            \newgeometry{{vmargin={{40mm}}, hmargin={{30mm,30mm}}}}
+            \title{{Cover letter -- {keywordSelector}company{keywordSelector}}}
+            \author{{{keywordSelector}author{keywordSelector}}}
+            \begin{{document}}
+            \pagenumbering{{gobble}}
+            \maketitle
+
+            {keywordSelector}TEXT{keywordSelector}
+            \newline
+
+            \noindent
+            Yours sincerly,
+
+            \noindent
+            ?@author?@
+
+
+            \end{{document}}
+          '''
 reserved_keywords = ["?@company?@", "?@author?@"]
 
 specialCharsDict = {"\\" : "\\textbackslash ",

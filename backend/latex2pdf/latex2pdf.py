@@ -10,7 +10,7 @@ import re
 import tempfile
 import shutil
 import pdfkit
-from .constants import texFile, reserved_keywords, specialCharsDict, pdfFileName, texFileName, keywordSelector, defaultPaths
+from .constants import texFile, texTemplate, reserved_keywords, specialCharsDict, pdfFileName, texFileName, keywordSelector, defaultPaths
 from typing import List, Dict, Union
 import pathlib
 import random
@@ -52,7 +52,7 @@ class TextHandler:
       tmp_template.append(" ".join(tmp_words))
     return tmp_template
 
-  def addMainText(self, template: str)->str:
+  def preProcessTemplate(self, template: str)->str:
     """Prepare the latex text by adding the used template text"""
     template = re.sub('\n+','\n',template)
     template = template.split("\n")
@@ -61,7 +61,11 @@ class TextHandler:
     template = self.clean_template(template)
     template = '\\newline \n \n \\noindent \n'.join(template)
     template = "\\noindent \n " + template
-    template = texFile.replace(f"{keywordSelector}TEXT{keywordSelector}", template)
+    return template
+
+  def addMainText(self, template: str, style : Dict[str, str])->str:
+    """Prepare the latex text by adding the used template text"""
+    template = texTemplate.getTexFile(style["font"]).replace(f"{keywordSelector}TEXT{keywordSelector}", template)
     return template
 
   def getKeyWords(self, template: str)->List[str]:
@@ -186,7 +190,7 @@ class Latex2PDF(TextHandler, FileHandler):
     Paths.texFile, Paths.PDFFile = self.getFilePath(Paths.PDFDir, self._texFileName), self.getFilePath(Paths.PDFDir, self._pdfFileName)
     return Paths
 
-  def initProjectPaths(self, template: str)->PathHandler:
+  def initProjectPaths(self)->PathHandler:
     """Creates project by creating working dir, fix latex file, and create a PDF"""
     Paths = PathHandler()
     #Create working directory
@@ -199,18 +203,30 @@ class Latex2PDF(TextHandler, FileHandler):
     self.convertLatex(Paths.PDFDir, Paths.texFile)
 
 
-  def initProject(self, template: str)->Dict[str, Union[pathlib.Path, List[str]]]:
+  def initProject(self, templateText: str, style: Dict[str, str])->Dict[str, Union[pathlib.Path, List[str]]]:
     """Initiate project for user"""
     try:
-      template = self.addMainText(template)
-      Path = self.initProjectPaths(template)
+      Path = self.initProjectPaths()
+
+      templateText = self.preProcessTemplate(templateText)
+      self.writeFile(Path.projectDir, "templateText.txt", templateText)
+      template = self.addMainText(templateText, style)
       self.writeFile(Path.projectDir, "template.txt", template)
+
       #Highlight keywords after saving template
       template = self.highLightKeywords(template)
       self.createPDFFromLatex(Path, template)
       return {"success" : True, "PDFDir" : Path.PDFDir, "projectDir": Path.projectDir, "keyWords": self.getKeyWords(template)}
     except Exception as e:
+      print(e)
       return {"success" : False}
+
+  def updateStyles(self, styles: Dict[str, Union[str, bool]], oldPaths)->bool:
+    projectDir = oldPaths.projectDir
+    templateText = self.readFile(projectDir, "templateText.txt")
+    template = self.addMainText(templateText, styles)
+    self.writeFile(projectDir, "template.txt", template)
+
 
   def updateProject(self, useHighlight:bool, keyWords: Dict[str, str], oldPaths: PathHandler)->Dict[str, pathlib.Path]:
     """Update project for user"""
@@ -252,12 +268,16 @@ class Latex2PDFHandler(Resource, Latex2PDF):
     queryData = request.get_json(force=True)
     initProject = queryData['initProject']
     if initProject:
-      template = queryData['template']
-      return self.initProject(template)
+      initProject, style = queryData['template'], queryData['style']
+      return self.initProject(initProject, style)
     else:
-      useHighlight, keyWords, paths = queryData["useHighlight"], queryData['keyWords'], queryData['URLS']
-
+      style, useHighlight, keyWords, paths = queryData["style"], queryData["useHighlight"], queryData['keyWords'], queryData['URLS']
       Paths = PathHandler(paths)
+
+      if style["update"]:
+        self.updateStyles(style, Paths)
+
+
       return self.updateProject(useHighlight, keyWords, Paths)
 
 

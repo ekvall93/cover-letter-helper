@@ -18,3 +18,13 @@ export interface URLS {
   PDFDir: string;
   projectDir: string
 }
+
+export interface Fonts {
+  value: string;
+  viewValue: string;
+}
+
+export interface Style {
+  font: string
+  update: boolean
+}
