@@ -21,16 +21,16 @@ export class UrlHandlerService {
 
   initiateUrls(x : pdfTemplateOutput) : URLS {
     let Urls = <URLS>{};
-    Urls.pdfPath = x.pdfPath;
-    Urls.currentProjectPath = this.readPDFPath(x.pdfPath);
-    Urls.projectPath = x.projectPath;
-    Urls.projectPathToDelete = this.deletePDFPath(x.projectPath);
+    Urls.PDFDir = x.PDFDir;
+    Urls.currentProjectPath = this.readPDFPath(x.PDFDir);
+    Urls.projectDir = x.projectDir;
+    Urls.projectPathToDelete = this.deletePDFPath(x.projectDir);
     return Urls
   }
 
   updateUrls(x : pdfTemplateOutput, Urls: URLS) : URLS {
-    Urls.pdfPath = x.pdfPath;
-    Urls.currentProjectPath = this.readPDFPath(x.pdfPath);
+    Urls.PDFDir = x.PDFDir;
+    Urls.currentProjectPath = this.readPDFPath(x.PDFDir);
     return Urls
   }
 }

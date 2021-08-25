@@ -1,10 +1,10 @@
 import { SafeUrl } from '@angular/platform-browser';
 
 export interface pdfTemplateOutput {
-  pdfPath?: string;
+  PDFDir?: string;
   keyWords?: string[]
   success: boolean;
-  projectPath?: string;
+  projectDir?: string;
 }
 
 export interface EditKeyword {
@@ -15,6 +15,6 @@ export interface EditKeyword {
 export interface URLS {
   currentProjectPath: SafeUrl;
   projectPathToDelete: string;
-  pdfPath: string;
-  projectPath: string
+  PDFDir: string;
+  projectDir: string
 }

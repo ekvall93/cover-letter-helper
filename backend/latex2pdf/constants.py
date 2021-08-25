@@ -11,22 +11,37 @@ class InitialProject(TypedDict):
 class UpdatedProject(TypedDict):s
     pdfPath: str """
 
+defaultPaths = {"PDFDir": None, "projectDir": None, "texFile": None, "PDFFile": None}
+
+
 keywordSelector = "?@"
 
-texFile = r'''
-          \documentclass{article}
-          \usepackage[utf8]{inputenc}
-          \usepackage{geometry}
-          \usepackage{color, soul}
-          \newgeometry{vmargin={40mm}, hmargin={30mm,30mm}}
+texCommand = r'''
+          \makeatletter
+          \renewcommand{\overset}[2]{\ensuremath{\mathop{\kern\z@\mbox{#2}}\limits^{\mbox{\scriptsize #1}}}}
+          \renewcommand{\underset}[2]{\ensuremath{\mathop{\kern\z@\mbox{#2}}\limits_{\mbox{\scriptsize #1}}}}
+          \makeatother
+          '''
 
-          \title{Cover letter -- ?@company?@}
-          \author{?@author?@}
-          \begin{document}
-          \pagenumbering{gobble}
+texFile = fr'''
+          \documentclass{{article}}
+          \usepackage[utf8]{{inputenc}}
+          \usepackage{{geometry}}
+          \usepackage{{color, soul}}
+          \usepackage{{lettrine}}
+          \usepackage{{amsmath}}
+
+          {texCommand}
+
+          \newgeometry{{vmargin={{40mm}}, hmargin={{30mm,30mm}}}}
+
+          \title{{Cover letter -- {keywordSelector}company{keywordSelector}}}
+          \author{{{keywordSelector}author{keywordSelector}}}
+          \begin{{document}}
+          \pagenumbering{{gobble}}
           \maketitle
 
-          ?@TEXT?@
+          {keywordSelector}TEXT{keywordSelector}
           \newline
 
           \noindent
@@ -36,9 +51,8 @@ texFile = r'''
           ?@author?@
 
 
-          \end{document}
+          \end{{document}}
         '''
-
 reserved_keywords = ["?@company?@", "?@author?@"]
 
 specialCharsDict = {"\\" : "\\textbackslash ",

@@ -10,12 +10,18 @@ import re
 import tempfile
 import shutil
 import pdfkit
-from .constants import texFile, reserved_keywords, specialCharsDict, pdfFileName, texFileName, keywordSelector
+from .constants import texFile, reserved_keywords, specialCharsDict, pdfFileName, texFileName, keywordSelector, defaultPaths
 from typing import List, Dict, Union
 import pathlib
 import random
 config = pdfkit.configuration(wkhtmltopdf="/usr/local/bin/wkhtmltopdf")
 
+class PathHandler:
+    def __init__(self, paths=None):
+      if not paths:
+        paths = defaultPaths
+      for k,v in paths.items():
+        setattr(self, k, v)
 
 class TextHandler:
   """Handles the text used for Latex and for PDF"""
@@ -25,10 +31,15 @@ class TextHandler:
     self.specialChars = list(self.specialCharsDict.keys())
 
   def highLightKeywords(self, template):
-    keyWords = list(set(re.findall(r'\?@.*?\?@', template)))
+    """Highlight all keywords in latex file"""
+    keyWords = list(set(re.findall(fr'\{keywordSelector}.*?\{keywordSelector}', template)))
     for k in keyWords:
-      template = template.replace(k, "\hl{" + k + "}")
+      template = template.replace(k, self.highlight(k))
     return template
+
+  def highlight(self, word: str)->str:
+    """Highlight word in latex"""
+    return "\hl{" + word + "}"
 
   def clean_template(self, paragraphs: List[str])->List[str]:
     """Clean paragraphs from special symbols"""
@@ -50,12 +61,12 @@ class TextHandler:
     template = self.clean_template(template)
     template = '\\newline \n \n \\noindent \n'.join(template)
     template = "\\noindent \n " + template
-    template = texFile.replace("?@TEXT?@", template)
+    template = texFile.replace(f"{keywordSelector}TEXT{keywordSelector}", template)
     return template
 
   def getKeyWords(self, template: str)->List[str]:
     """Find all keywords in the user's template text"""
-    keyWords = re.findall(r'\?@.*?\?@', template)
+    keyWords = re.findall(fr'\{keywordSelector}.*?\{keywordSelector}', template)
     keyWords += self.reserved_keywords
     keyWords = list(set(keyWords))
     return keyWords
@@ -84,9 +95,9 @@ class Latex2PDFConverter:
           print(e)
           pass
 
-  def convertLatex(self, dirpath: pathlib.Path, coverFile: pathlib.Path)->None:
+  def convertLatex(self, dirpath: pathlib.Path, texFile: pathlib.Path)->None:
     """Convert the Latex file to PDF"""
-    cmd = ['pdflatex', '-interaction', 'nonstopmode', "-output-directory", dirpath, coverFile]
+    cmd = ['pdflatex', '-interaction', 'nonstopmode', "-output-directory", dirpath, texFile]
     proc = subprocess.Popen(cmd)
     proc.communicate()
     retcode = proc.returncode
@@ -156,7 +167,6 @@ class FileHandler(Latex2PDFConverter):
   def deleteFolder(self, path: pathlib.Path)->None:
     """Delete folder"""
     dir_path = os.path.dirname(path)
-    #dir_path = self.checkFolderEnd(dir_path)
     if os.path.isdir(dir_path):
       shutil.rmtree(dir_path)
     else:
@@ -170,62 +180,63 @@ class Latex2PDF(TextHandler, FileHandler):
     self._texFileName = texFileName
     self._pdfFileName = pdfFileName
 
-  def createProjectPaths(self, template: str)->Dict[str,pathlib.Path]:
+  def createProjectPaths(self, Paths: PathHandler)->PathHandler:
+    #Create a folder for PDF-files (need a new one for everytime we re-render the PDF...)
+    Paths.PDFDir = self.createDir(Paths.projectDir, str(random.getrandbits(128)))
+    Paths.texFile, Paths.PDFFile = self.getFilePath(Paths.PDFDir, self._texFileName), self.getFilePath(Paths.PDFDir, self._pdfFileName)
+    return Paths
+
+  def initProjectPaths(self, template: str)->PathHandler:
     """Creates project by creating working dir, fix latex file, and create a PDF"""
-    pathsDict = dict()
-    pathsDict["projectPath"] = self.createTmpDir()
-    pathsDict["pdfPath"] = self.createDir(pathsDict["projectPath"], str(random.getrandbits(128)))
-    pathsDict["coverFile"], pathsDict["coverPDF"] = self.getFilePath(pathsDict["pdfPath"], self._texFileName), self.getFilePath(pathsDict["pdfPath"], self._pdfFileName)
+    Paths = PathHandler()
+    #Create working directory
+    Paths.projectDir = self.createTmpDir()
+    pathsDict = self.createProjectPaths(Paths)
     return pathsDict
 
-  def updatePDFFolderPaths(self, template: str, projectPath: pathlib.Path)->Dict[str,pathlib.Path]:
-    """Creates project by creating working dir, fix latex file, and create a PDF"""
-    pathsDict = dict()
-    pathsDict["pdfPath"] = self.createDir(projectPath, str(random.getrandbits(128)))
-    pathsDict["coverFile"], pathsDict["coverPDF"] = self.getFilePath(pathsDict["pdfPath"], self._texFileName), self.getFilePath(pathsDict["pdfPath"], self._pdfFileName)
-    #self.writeFile(pdfPath, self._texFileName, template)
-    #self.convertLatex(pdfPath, coverFile)
-    return pathsDict
+  def createPDFFromLatex(self, Paths: PathHandler, template: str)->None:
+    self.writeFile(Paths.PDFDir, self._texFileName, template)
+    self.convertLatex(Paths.PDFDir, Paths.texFile)
+
 
   def initProject(self, template: str)->Dict[str, Union[pathlib.Path, List[str]]]:
     """Initiate project for user"""
     try:
       template = self.addMainText(template)
-      pathsDict = self.createProjectPaths(template)
-      self.writeFile(pathsDict["projectPath"], "template.txt", template)
+      Path = self.initProjectPaths(template)
+      self.writeFile(Path.projectDir, "template.txt", template)
       #Highlight keywords after saving template
       template = self.highLightKeywords(template)
-      self.writeFile(pathsDict["pdfPath"], self._texFileName, template)
-      self.convertLatex(pathsDict["pdfPath"], pathsDict["coverFile"])
-      return {"success" : True, "pdfPath" : pathsDict["coverPDF"], "projectPath": pathsDict["projectPath"], "keyWords": self.getKeyWords(template)}
+      self.createPDFFromLatex(Path, template)
+      return {"success" : True, "PDFDir" : Path.PDFDir, "projectDir": Path.projectDir, "keyWords": self.getKeyWords(template)}
     except Exception as e:
-      print(e)
       return {"success" : False}
 
-  def updateProject(self, useHighlight:bool, keyWords: Dict[str, str], URLS: Dict[str,pathlib.Path])->Dict[str, pathlib.Path]:
+  def updateProject(self, useHighlight:bool, keyWords: Dict[str, str], oldPaths: PathHandler)->Dict[str, pathlib.Path]:
     """Update project for user"""
-    pdfPath, projectPath = URLS["pdfPath"], URLS["projectPath"]
-    template = self.readFile(projectPath, "template.txt")
+    PDFDir, projectDir = oldPaths.PDFDir, oldPaths.projectDir
+    template = self.readFile(projectDir, "template.txt")
     for k, v in keyWords.items():
-      if k.strip("?@") != v:
+      if k.strip(f"{keywordSelector}") != v:
         clean_word = self.cleanWord(v)
-        template = template.replace(k, "\hl{" + clean_word + "}" if useHighlight else clean_word)
+        template = template.replace(k, self.highlight(clean_word) if useHighlight else clean_word)
     if useHighlight:
       template = self.highLightKeywords(template)
-    pathsDict = self.updatePDFFolderPaths(template, projectPath)
 
+    Paths = PathHandler()
+    Paths.projectDir = projectDir
+    #Create a new dir for the PDF so we can re-render the new PDF (flask wont update otherwise....)
+    Paths = self.createProjectPaths(Paths)
     try:
-      self.writeFile(pathsDict["pdfPath"], self._texFileName, template)
-      self.convertLatex(pathsDict["pdfPath"], pathsDict["coverFile"])
+      self.createPDFFromLatex(Paths, template)
       #Succeeded compiling latex, delete old project
-      print(pathsDict["pdfPath"], pdfPath)
-      self.deleteFolder(pdfPath)
-      return {"success" : True, "pdfPath" : pathsDict["pdfPath"]}
+      self.deleteFolder(PDFDir)
+      return {"success" : True, "PDFDir" : Paths.PDFDir}
     except Exception as e:
       print(e)
-      self.deleteFolder(pathsDict["pdfPath"])
+      self.deleteFolder(Paths.PDFDir)
       #Failed to compile latex, use old dir
-      return {"success" : False, "pdfPath" : pdfPath}
+      return {"success" : False, "PDFDir" : PDFDir}
 
 class Latex2PDFHandler(Resource, Latex2PDF):
   def __init__(self):
@@ -244,7 +255,9 @@ class Latex2PDFHandler(Resource, Latex2PDF):
       template = queryData['template']
       return self.initProject(template)
     else:
-      useHighlight, keyWords, URLS = queryData["useHighlight"], queryData['keyWords'], queryData['URLS']
-      return self.updateProject(useHighlight, keyWords, URLS)
+      useHighlight, keyWords, paths = queryData["useHighlight"], queryData['keyWords'], queryData['URLS']
+
+      Paths = PathHandler(paths)
+      return self.updateProject(useHighlight, keyWords, Paths)
 
 
