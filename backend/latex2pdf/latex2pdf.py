@@ -16,12 +16,38 @@ import pathlib
 import random
 config = pdfkit.configuration(wkhtmltopdf="/usr/local/bin/wkhtmltopdf")
 
+class KeyWord:
+  """Keep track on keyword data"""
+  def __init__(self, keyword):
+    for k, v in keyword.items():
+      setattr(self, k, v)
+
+class KeyWords:
+  """Keep track on all keywords and its data"""
+  def __init__(self, keywords):
+    self._data_dict = keywords
+    self._keyWords = {k : KeyWord(v) for k, v in keywords.items()}
+
+  def __getitem__(self, key):
+    return self._keyWords[key]
+
+  def keys(self):
+    return self._keyWords.keys()
+
+  def items(self):
+    return self._keyWords.items()
+
+  @property
+  def data_dict(self):
+    return self._data_dict
+
 class PathHandler:
-    def __init__(self, paths=None):
-      if not paths:
-        paths = defaultPaths
-      for k,v in paths.items():
-        setattr(self, k, v)
+  """Handles all necessary files- and folder paths"""
+  def __init__(self, paths=None):
+    if not paths:
+      paths = defaultPaths
+    for k,v in paths.items():
+      setattr(self, k, v)
 
 class TextHandler:
   """Handles the text used for Latex and for PDF"""
@@ -36,6 +62,20 @@ class TextHandler:
     for k in keyWords:
       template = template.replace(k, self.highlight(k))
     return template
+
+  def indexKeywords(self, template: str, keyWords: KeyWords)->str:
+    """Add index to keywords"""
+    for k,v in keyWords.items():
+      template = template.replace(k, "\overset{{\large" + v.number + "}}{{" + k + "}}")
+    return template
+
+  def keywordMarkdown(self, word: str, options, index: str)->str:
+    """Add keyword markdown"""
+    if options["useHighlight"]:
+      word = self.highlight(word)
+    if options["useIndexing"]:
+      word = "\overset{{\large" + index + "}}{{" + word + "}}"
+    return word
 
   def highlight(self, word: str)->str:
     """Highlight word in latex"""
@@ -73,7 +113,7 @@ class TextHandler:
     keyWords = re.findall(fr'\{keywordSelector}.*?\{keywordSelector}', template)
     keyWords += self.reserved_keywords
     keyWords = list(set(keyWords))
-    return keyWords
+    return {w : {"number" : str(i + 1), "word" : w} for i, w in enumerate(keyWords)}
 
   def cleanWord(self, v: str)->str:
     """Clean up the word for latex"""
@@ -199,9 +239,15 @@ class Latex2PDF(TextHandler, FileHandler):
     return pathsDict
 
   def createPDFFromLatex(self, Paths: PathHandler, template: str)->None:
+    """Write latex file, and the convert it into PDF"""
     self.writeFile(Paths.PDFDir, self._texFileName, template)
     self.convertLatex(Paths.PDFDir, Paths.texFile)
 
+  def initMarkdownKeywords(self, template: str, keyWords: Dict[str, Dict[str,str]])->str:
+    """Mark keywords with highlighting and indexing"""
+    template = self.indexKeywords(template, keyWords)
+    template = self.highLightKeywords(template)
+    return template
 
   def initProject(self, templateText: str, style: Dict[str, str])->Dict[str, Union[pathlib.Path, List[str]]]:
     """Initiate project for user"""
@@ -214,29 +260,36 @@ class Latex2PDF(TextHandler, FileHandler):
       self.writeFile(Path.projectDir, "template.txt", template)
 
       #Highlight keywords after saving template
-      template = self.highLightKeywords(template)
+      keyWords = self.getKeyWords(template)
+      keyWords = KeyWords(keyWords)
+      template = self.initMarkdownKeywords(template, keyWords)
+
       self.createPDFFromLatex(Path, template)
-      return {"success" : True, "PDFDir" : Path.PDFDir, "projectDir": Path.projectDir, "keyWords": self.getKeyWords(template)}
+      return {"success" : True, "PDFDir" : Path.PDFDir, "projectDir": Path.projectDir, "keyWords": keyWords.data_dict}
     except Exception as e:
       print(e)
       return {"success" : False}
 
   def updateStyles(self, styles: Dict[str, Union[str, bool]], oldPaths)->bool:
+    """Update styles in latex template, and save it for future updates"""
     projectDir = oldPaths.projectDir
     templateText = self.readFile(projectDir, "templateText.txt")
     template = self.addMainText(templateText, styles)
     self.writeFile(projectDir, "template.txt", template)
 
-
-  def updateProject(self, useHighlight:bool, keyWords: Dict[str, str], oldPaths: PathHandler)->Dict[str, pathlib.Path]:
+  def updateProject(self, keyWordMarkdown:bool, keyWords: KeyWords, oldPaths: PathHandler)->Dict[str, pathlib.Path]:
     """Update project for user"""
     PDFDir, projectDir = oldPaths.PDFDir, oldPaths.projectDir
     template = self.readFile(projectDir, "template.txt")
+
     for k, v in keyWords.items():
-      if k.strip(f"{keywordSelector}") != v:
-        clean_word = self.cleanWord(v)
-        template = template.replace(k, self.highlight(clean_word) if useHighlight else clean_word)
-    if useHighlight:
+      if k.strip(f"{keywordSelector}") != v.word:
+        clean_word = self.cleanWord(v.word)
+        template = template.replace(k, self.keywordMarkdown(clean_word, keyWordMarkdown, v.number))
+
+    if keyWordMarkdown["useIndexing"]:
+        template = self.indexKeywords(template, keyWords)
+    if keyWordMarkdown["useHighlight"]:
       template = self.highLightKeywords(template)
 
     Paths = PathHandler()
@@ -272,14 +325,12 @@ class Latex2PDFHandler(Resource, Latex2PDF):
       del style["update"]
       return self.initProject(initProject, style)
     else:
-      style, useHighlight, keyWords, paths = queryData["style"], queryData["useHighlight"], queryData['keyWords'], queryData['URLS']
+      style, keyWordMarkdown, keyWords, paths = queryData["style"], queryData["keyWordMarkdown"], queryData['keyWords'], queryData['URLS']
+      keyWords = KeyWords(keyWords)
       Paths = PathHandler(paths)
-
       if style["update"]:
         del style["update"]
         self.updateStyles(style, Paths)
-
-
-      return self.updateProject(useHighlight, keyWords, Paths)
+      return self.updateProject(keyWordMarkdown, keyWords, Paths)
 
 

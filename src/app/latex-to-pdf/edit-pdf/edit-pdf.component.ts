@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { debounceTimeValue, fonts, defaultStyle } from '../constants';
-import { pdfTemplateOutput, URLS } from '../latex2pdfInterface';
+import { keyWord, KeyWordMarkdown, pdfTemplateOutput, URLS } from '../latex2pdfInterface';
 import { FlaskService } from '../services/flask.service';
 import { UrlHandlerService } from '../services/url-handler.service';
 import { WordProcessorService } from '../services/word-processor.service';
@@ -14,7 +14,7 @@ import { WordProcessorService } from '../services/word-processor.service';
 })
 export class EditPDFComponent implements OnInit {
   @Input() Urls : URLS;
-  @Input() keyWords : { [key: string]: string };
+  @Input() keyWords : { [key: string]: keyWord };
   constructor(public wordProcessor : WordProcessorService,
               private flask: FlaskService,
               private urlHandler: UrlHandlerService) { }
@@ -28,13 +28,14 @@ export class EditPDFComponent implements OnInit {
   key: string;
   templateUpdater = new Subject();
   observableTemplate$: Observable<any>;
-  useHighlight = true;
+  keyWordMarkdown : KeyWordMarkdown = {useHighlight : true, useIndexing : true}
+
 
   ngOnInit(): void {
     /* Set Debouncer on the update on PDF to avoid spam */
     this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(debounceTimeValue),
     switchMap(() => this.flask.updateTemplate(this.style,
-                                              this.useHighlight,
+                                              this.keyWordMarkdown,
                                               this.keyWords,
                                               this.Urls)))
 
@@ -54,7 +55,7 @@ export class EditPDFComponent implements OnInit {
   selectKeyword(key : string) : void {
     /* Select the keyword that the used want to modify */
     this.keywordSelected = true;
-    this.keyWord  = this.keyWords[key];
+    this.keyWord  = this.keyWords[key].word;
     this.key = key;
 
   }
@@ -62,7 +63,7 @@ export class EditPDFComponent implements OnInit {
   updatePDF() : void {
     /* Update the PDF with the modified keywords */
     if(this.key) {
-      this.keyWords[this.key] = this.keyWord
+      this.keyWords[this.key].word = this.keyWord
     }
     this.templateUpdater.next();
   }

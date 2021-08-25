@@ -2,7 +2,7 @@ import { SafeUrl } from '@angular/platform-browser';
 
 export interface pdfTemplateOutput {
   PDFDir?: string;
-  keyWords?: string[]
+  keyWords?: { [key: string]: keyWord }
   success: boolean;
   projectDir?: string;
 }
@@ -19,6 +19,7 @@ export interface URLS {
   projectDir: string
 }
 
+
 export interface Fonts {
   value: string;
   viewValue: string;
@@ -29,4 +30,15 @@ export interface Style {
   update: boolean;
   vmargin: number;
   hmargin: number;
+}
+
+export interface keyWord {
+  word: string,
+  number: number
+}
+
+
+export interface KeyWordMarkdown {
+  useHighlight: boolean,
+  useIndexing: boolean,
 }

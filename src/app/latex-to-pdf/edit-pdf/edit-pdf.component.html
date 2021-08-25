@@ -5,7 +5,7 @@
       <div fxFlex="20">
         <mat-selection-list [multiple]="false">
           <mat-list-option *ngFor="let word of keyWords | keyvalue" (click)="selectKeyword(word.key)">
-            <b>{{wordProcessor.stripKeywordSeparator(word.key)}}</b> : {{word.value}}
+            <b>{{word.value["number"]}}</b> : {{word.value["word"]}}
           </mat-list-option>
         </mat-selection-list>
       </div>
@@ -22,7 +22,10 @@
           <mat-label>Change keyword</mat-label>
           <input matInput [disabled]="!keywordSelected" [(ngModel)]="keyWord" (input)="updatePDF()">
         </mat-form-field>
-        <button mat-raised-button color="primary" (click)="useHighlight=!useHighlight;updatePDF()">Highlight</button>
+      </form>
+      <form class="example-form">
+        <button mat-raised-button color="primary" (click)="keyWordMarkdown.useHighlight=!keyWordMarkdown.useHighlight;updatePDF()">Highlight</button>
+        <button mat-raised-button color="primary" (click)="keyWordMarkdown.useIndexing=!keyWordMarkdown.useIndexing;updatePDF()">Highlight</button>
         <mat-form-field appearance="fill">
           <mat-label>Font</mat-label>
           <mat-select [(ngModel)]="font" (ngModelChange)="updateFont()">

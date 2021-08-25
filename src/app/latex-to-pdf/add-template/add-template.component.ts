@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { defaultStyle } from '../constants';
-import { pdfTemplateOutput, URLS } from '../latex2pdfInterface';
+import { pdfTemplateOutput, URLS, keyWord } from '../latex2pdfInterface';
 import { FlaskService } from '../services/flask.service';
 import { UrlHandlerService } from '../services/url-handler.service';
 import { WordProcessorService } from '../services/word-processor.service';
@@ -14,10 +14,10 @@ import {exampleText} from './example'
 
 export class AddTemplateComponent implements OnInit {
   @Output() newUrlsEvent = new EventEmitter<URLS>();
-  @Output() newKeywordsEvent = new EventEmitter<{ [key: string]: string }>();
+  @Output() newKeywordsEvent = new EventEmitter<{ [key: string]: keyWord }>();
   coverLetterContent : string = exampleText;
   Urls = <URLS>{};
-  keyWords: { [key: string]: string } = {};
+  keyWords: { [key: string]: keyWord } = {};
   constructor(private flask: FlaskService,
               private urlHandler: UrlHandlerService,
               public wordProcessor : WordProcessorService ) { }
@@ -34,6 +34,7 @@ export class AddTemplateComponent implements OnInit {
       }
       this.Urls = this.urlHandler.initiateUrls(x);
       this.keyWords = this.getKeywords(x.keyWords);
+      console.log(this.keyWords);
       this.sendItems();
     });
   }
@@ -43,13 +44,12 @@ export class AddTemplateComponent implements OnInit {
     this.newKeywordsEvent.emit(this.keyWords);
   }
 
-  getKeywords(keyWords : string[]) : { [key: string]: string } {
+  getKeywords(keyWords : { [key: string]: keyWord }) : { [key: string]: keyWord } {
     /* Gather all keywords that the user have added */
-    let newKeywords : { [key: string]: string } = {};
-    for (let w of keyWords) {
-      newKeywords[w] = this.wordProcessor.stripKeywordSeparator(w);
+    for (let key in keyWords) {
+      keyWords[key].word = this.wordProcessor.stripKeywordSeparator(keyWords[key].word);
     }
-    return newKeywords;
+    return keyWords;
   }
 
 }
