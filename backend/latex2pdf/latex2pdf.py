@@ -65,7 +65,7 @@ class TextHandler:
 
   def addMainText(self, template: str, style : Dict[str, str])->str:
     """Prepare the latex text by adding the used template text"""
-    template = texTemplate.getTexFile(style["font"]).replace(f"{keywordSelector}TEXT{keywordSelector}", template)
+    template = texTemplate.getTexFile(**style).replace(f"{keywordSelector}TEXT{keywordSelector}", template)
     return template
 
   def getKeyWords(self, template: str)->List[str]:
@@ -269,12 +269,14 @@ class Latex2PDFHandler(Resource, Latex2PDF):
     initProject = queryData['initProject']
     if initProject:
       initProject, style = queryData['template'], queryData['style']
+      del style["update"]
       return self.initProject(initProject, style)
     else:
       style, useHighlight, keyWords, paths = queryData["style"], queryData["useHighlight"], queryData['keyWords'], queryData['URLS']
       Paths = PathHandler(paths)
 
       if style["update"]:
+        del style["update"]
         self.updateStyles(style, Paths)
 
 

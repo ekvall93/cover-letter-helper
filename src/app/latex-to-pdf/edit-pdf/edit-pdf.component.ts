@@ -19,7 +19,9 @@ export class EditPDFComponent implements OnInit {
               private flask: FlaskService,
               private urlHandler: UrlHandlerService) { }
   style = defaultStyle;
-  font = "lmodern";
+  hmargin = defaultStyle.hmargin;
+  vmargin = defaultStyle.vmargin;
+  font = defaultStyle.font;
   fonts = fonts;
   keywordSelected = false;
   keyWord: string = "";
@@ -65,10 +67,27 @@ export class EditPDFComponent implements OnInit {
     this.templateUpdater.next();
   }
 
-  updateFont() {
+  updateFont() : void
+  {
+    /* Update font */
     this.style.font = this.font;
     this.style.update = true;
     this.updatePDF();
+  }
+
+  updateHmargin() : void {
+    if (this.hmargin) {
+      this.style.hmargin = this.hmargin;
+      this.style.update = true;
+      this.updatePDF();
+    }
+  }
+  updateVmargin() : void {
+    if (this.vmargin) {
+      this.style.vmargin = this.vmargin;
+      this.style.update = true;
+      this.updatePDF();
+    }
   }
 
   ngOnDestroy() : void {

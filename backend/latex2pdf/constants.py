@@ -19,7 +19,7 @@ keywordSelector = "?@"
 
 class texTemplate:
   @staticmethod
-  def getTexFile(font):
+  def getTexFile(font, hmargin, vmargin):
     _texCommand = r'''
               \makeatletter
               \renewcommand{\overset}[2]{\ensuremath{\mathop{\kern\z@\mbox{#2}}\limits^{\mbox{\scriptsize #1}}}}
@@ -37,7 +37,7 @@ class texTemplate:
             \usepackage{{{font}}}
             \renewcommand{{\familydefault}}{{\sfdefault}}
             {_texCommand}
-            \newgeometry{{vmargin={{40mm}}, hmargin={{30mm,30mm}}}}
+            \newgeometry{{vmargin={{{vmargin}mm}}, hmargin={{{hmargin}mm,{hmargin}mm}}}}
             \title{{Cover letter -- {keywordSelector}company{keywordSelector}}}
             \author{{{keywordSelector}author{keywordSelector}}}
             \begin{{document}}

@@ -33,6 +33,17 @@
         </mat-form-field>
       </form>
     </div>
+
+    <form class="example-form">
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>hmargin</mat-label>
+        <input matInput min="0" max="100" [(ngModel)]="hmargin" (input)="updateHmargin()">
+      </mat-form-field>
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>vmargin</mat-label>
+        <input matInput [(ngModel)]="vmargin" (input)="updateVmargin()">
+      </mat-form-field>
+    </form>
   </div>
 </div>
 </div>

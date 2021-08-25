@@ -25,6 +25,8 @@ export interface Fonts {
 }
 
 export interface Style {
-  font: string
-  update: boolean
+  font: string;
+  update: boolean;
+  vmargin: number;
+  hmargin: number;
 }

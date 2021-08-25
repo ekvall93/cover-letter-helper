@@ -5,7 +5,9 @@ export const deletePDFapi : string = "deletePDF";
 
 export const defaultStyle : Style = {
   font : "arev",
-  update : false
+  update : false,
+  vmargin : 20,
+  hmargin : 30
 }
 
 export const  fonts : Fonts[] = [
