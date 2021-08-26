@@ -9,6 +9,11 @@ html, body {
   margin: 0;
 }
 
+* {
+  font-family: Poppins /* Replace with your custom font */, sans-serif !important;
+  /* Add !important to overwrite all elements */
+}
+
 
 @import '~bootstrap/scss/bootstrap';
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";

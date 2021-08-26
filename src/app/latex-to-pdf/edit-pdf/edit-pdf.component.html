@@ -1,21 +1,21 @@
 <div class="container">
-<div *ngIf="this.Urls.currentProjectPath" style="flex:1;" fxLayout="column">
-  <div fxFlex="80">
+<div *ngIf="this.Urls.currentProjectPath" style="max-height: 100%;" fxLayout="column">
+  <div fxFlex="70">
     <div style="height:100%" fxLayout="row">
       <div fxFlex="20">
-        <mat-selection-list [multiple]="false">
-          <mat-list-option *ngFor="let word of keyWords | keyvalue" (click)="selectKeyword(word.key)">
-            <b>{{word.value["number"]}}</b> : {{word.value["word"]}}
+        <mat-selection-list style="overflow-y: scroll;" [multiple]="false">
+          <mat-list-option style="overflow-y:scroll" *ngFor="let word of sortedKeywords" (click)="selectKeyword(word[0])">
+              <div><b>{{word[1]["number"]}}.</b> {{word[1]["word"]}}</div>
           </mat-list-option>
         </mat-selection-list>
       </div>
       <div fxFlex="80">
-        <iframe id="pdfIframe" style="width:100%; height:100%" [attr.src]="this.Urls.currentProjectPath| safe"></iframe>
+        <iframe #iframe id="iframe" style="width:100%; height:100%" [attr.src]="this.Urls.currentProjectPath| safe"></iframe>
       </div>
     </div>
   </div>
 
-  <div fxFlex="20">
+  <div fxFlex="30">
     <div style="height:100%;width:100%" fxLayout="row" fxLayoutAlign="center center" >
       <form class="example-form">
         <mat-form-field class="example-full-width" appearance="fill">
@@ -24,8 +24,8 @@
         </mat-form-field>
       </form>
       <form class="example-form">
-        <button mat-raised-button color="primary" (click)="keyWordMarkdown.useHighlight=!keyWordMarkdown.useHighlight;updatePDF()">Highlight</button>
-        <button mat-raised-button color="primary" (click)="keyWordMarkdown.useIndexing=!keyWordMarkdown.useIndexing;updatePDF()">Highlight</button>
+        <button mat-raised-button color="primary" (click)="keyWordOptions.useHighlight=!keyWordOptions.useHighlight;updatePDF()">Highlight</button>
+        <button mat-raised-button color="primary" (click)="keyWordOptions.useIndexing=!keyWordOptions.useIndexing;updatePDF()">Highlight</button>
         <mat-form-field appearance="fill">
           <mat-label>Font</mat-label>
           <mat-select [(ngModel)]="font" (ngModelChange)="updateFont()">
@@ -45,6 +45,16 @@
       <mat-form-field class="example-full-width" appearance="fill">
         <mat-label>vmargin</mat-label>
         <input matInput [(ngModel)]="vmargin" (input)="updateVmargin()">
+      </mat-form-field>
+    </form>
+    <form>
+      <mat-form-field appearance="fill">
+        <mat-label>Font size</mat-label>
+        <mat-select [(value)]="fontSize" [(ngModel)]="fontSize" (ngModelChange)="updateFontSize()">
+          <mat-option *ngFor="let fs of fontSizes" [value]="fs.value">
+            {{fs.viewValue}}
+          </mat-option>
+        </mat-select>
       </mat-form-field>
     </form>
   </div>

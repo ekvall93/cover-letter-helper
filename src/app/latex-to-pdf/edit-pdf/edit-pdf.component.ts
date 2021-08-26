@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { fromEvent, Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
-import { debounceTimeValue, fonts, defaultStyle } from '../constants';
-import { keyWord, KeyWordMarkdown, pdfTemplateOutput, URLS } from '../latex2pdfInterface';
+import { debounceTimeValue, fonts, defaultStyle, fontSize } from '../constants';
+import { keyWord, KeyWordOptions, pdfTemplateOutput, URLS } from '../latex2pdfInterface';
 import { FlaskService } from '../services/flask.service';
 import { UrlHandlerService } from '../services/url-handler.service';
 import { WordProcessorService } from '../services/word-processor.service';
@@ -13,29 +13,37 @@ import { WordProcessorService } from '../services/word-processor.service';
   styleUrls: ['./edit-pdf.component.scss']
 })
 export class EditPDFComponent implements OnInit {
+  @ViewChild('iframe', {static: false}) iframe: ElementRef;
   @Input() Urls : URLS;
   @Input() keyWords : { [key: string]: keyWord };
+  @Input() sortedKeywords : []
   constructor(public wordProcessor : WordProcessorService,
               private flask: FlaskService,
               private urlHandler: UrlHandlerService) { }
+
+
+
   style = defaultStyle;
   hmargin = defaultStyle.hmargin;
   vmargin = defaultStyle.vmargin;
   font = defaultStyle.font;
+  fontSize = defaultStyle.fontSize;
+  fontSizes = fontSize;
   fonts = fonts;
   keywordSelected = false;
   keyWord: string = "";
   key: string;
   templateUpdater = new Subject();
   observableTemplate$: Observable<any>;
-  keyWordMarkdown : KeyWordMarkdown = {useHighlight : true, useIndexing : true}
+  keyWordOptions : KeyWordOptions = {useHighlight : true, useIndexing : true}
 
 
   ngOnInit(): void {
+
     /* Set Debouncer on the update on PDF to avoid spam */
     this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(debounceTimeValue),
     switchMap(() => this.flask.updateTemplate(this.style,
-                                              this.keyWordMarkdown,
+                                              this.keyWordOptions,
                                               this.keyWords,
                                               this.Urls)))
 
@@ -56,11 +64,18 @@ export class EditPDFComponent implements OnInit {
     /* Select the keyword that the used want to modify */
     this.keywordSelected = true;
     this.keyWord  = this.keyWords[key].word;
+    if (this.key) {
+      this.keyWords[this.key].isSelected = false
+    }
     this.key = key;
+    this.keyWords[this.key].isSelected = true
 
+    this.updatePDF();
   }
 
   updatePDF() : void {
+
+
     /* Update the PDF with the modified keywords */
     if(this.key) {
       this.keyWords[this.key].word = this.keyWord
@@ -72,6 +87,14 @@ export class EditPDFComponent implements OnInit {
   {
     /* Update font */
     this.style.font = this.font;
+    this.style.update = true;
+    this.updatePDF();
+  }
+
+  updateFontSize() : void
+  {
+    /* Update font */
+    this.style.fontSize= this.fontSize;
     this.style.update = true;
     this.updatePDF();
   }
@@ -94,6 +117,17 @@ export class EditPDFComponent implements OnInit {
   ngOnDestroy() : void {
     /* Clean up subject */
     this.templateUpdater.unsubscribe();
+  }
+
+  sortKeywords() {
+    var items = Object.keys(this.keyWords).map(function(key) {
+      return [key, this.keyWords[key]];
+    });
+    // Sort the array based on the second element
+    items.sort(function(first, second) {
+      return first[1]["number"] - second[1]["number"];
+    });
+    return items
   }
 
 }

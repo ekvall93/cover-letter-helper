@@ -1,3 +1,13 @@
+mat-selection-list {
+  max-height: 100%;
+  overflow: auto;
+}
+
+mat-list-option {
+  height: auto;
+}
+
+
 ::ng-deep .ngx-toolbar {
   display: none !important;
 }

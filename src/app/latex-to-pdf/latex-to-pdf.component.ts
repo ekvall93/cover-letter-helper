@@ -9,6 +9,7 @@ import {URLS } from './latex2pdfInterface';
 export class LatexToPDFComponent implements OnInit {
   coverLetterContent : string;
   keyWords: { [key: string]: string } = {};
+  sortedKeywords: [];
   Urls = <URLS>{};
 
   constructor() {
@@ -37,6 +38,10 @@ export class LatexToPDFComponent implements OnInit {
   addCoverLetterContent(e : string) : void {
     /* Update cover letter content */
     this.coverLetterContent = e;
+  }
+
+  addSortedKeywordsEvent(e : []) : void {
+    this.sortedKeywords = e;
   }
 
 

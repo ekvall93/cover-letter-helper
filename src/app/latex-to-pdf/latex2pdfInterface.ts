@@ -25,20 +25,32 @@ export interface Fonts {
   viewValue: string;
 }
 
+export interface FontSize {
+  value: number;
+  viewValue: number;
+}
+
 export interface Style {
   font: string;
   update: boolean;
   vmargin: number;
   hmargin: number;
+  fontSize: number;
 }
 
 export interface keyWord {
   word: string,
   number: number
+  isSelected : boolean
+}
+
+export interface keyWordInfo {
+  key: string,
+  keyWord: keyWord
 }
 
 
-export interface KeyWordMarkdown {
+export interface KeyWordOptions {
   useHighlight: boolean,
   useIndexing: boolean,
 }

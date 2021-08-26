@@ -1,14 +1,24 @@
-import {Fonts, Style} from "./latex2pdfInterface"
+import {Fonts, FontSize, Style} from "./latex2pdfInterface"
 export const debounceTimeValue : number = 300;
 export const readPFDapi : string = "readPDF";
 export const deletePDFapi : string = "deletePDF";
+
+
+export const keywordSelector : string = "?@"
 
 export const defaultStyle : Style = {
   font : "arev",
   update : false,
   vmargin : 20,
-  hmargin : 30
+  hmargin : 30,
+  fontSize : 10
 }
+
+export const  fontSize : FontSize[] = [
+  {value: 10, viewValue: 10},
+  {value: 11, viewValue: 11},
+  {value: 12, viewValue: 12},
+]
 
 export const  fonts : Fonts[] = [
   {value: "arev", viewValue: "arev"},
