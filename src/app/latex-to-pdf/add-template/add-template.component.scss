@@ -2,3 +2,20 @@ button {
   margin:0 auto;
   display:block;
 }
+::ng-deep .ngx-text-editor-textarea {
+  border:none !important;
+}
+
+
+::ng-deep .ngx-text-editor-grippie {
+  margin: auto;
+  height:10px;
+  width:90% !important;
+  background-color: transparent !important;
+  border-top: 3px black !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+
+}
+

@@ -7,13 +7,16 @@ import { FlaskService } from '../services/flask.service';
 import { UrlHandlerService } from '../services/url-handler.service';
 import { WordProcessorService } from '../services/word-processor.service';
 
+
 @Component({
   selector: 'app-edit-pdf',
   templateUrl: './edit-pdf.component.html',
   styleUrls: ['./edit-pdf.component.scss']
 })
 export class EditPDFComponent implements OnInit {
-  @ViewChild('iframe', {static: false}) iframe: ElementRef;
+  @ViewChild('pdfDiv') public pdfDiv: ElementRef;
+
+
   @Input() Urls : URLS;
   @Input() keyWords : { [key: string]: keyWord };
   @Input() sortedKeywords : []
@@ -21,7 +24,7 @@ export class EditPDFComponent implements OnInit {
               private flask: FlaskService,
               private urlHandler: UrlHandlerService) { }
 
-
+              
 
   style = defaultStyle;
   hmargin = defaultStyle.hmargin;
@@ -33,12 +36,17 @@ export class EditPDFComponent implements OnInit {
   keywordSelected = false;
   keyWord: string = "";
   key: string;
+  PDFscroll: number = 0;
+  defaultPDFZoom: number = 1;
+  pdfZoom: number = this.defaultPDFZoom;
   templateUpdater = new Subject();
   observableTemplate$: Observable<any>;
   keyWordOptions : KeyWordOptions = {useHighlight : true, useIndexing : true}
 
 
   ngOnInit(): void {
+
+    
 
     /* Set Debouncer on the update on PDF to avoid spam */
     this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(debounceTimeValue),
@@ -52,11 +60,18 @@ export class EditPDFComponent implements OnInit {
         alert("You are using symbols that currently don't work.")
         return;
       }
+
+      /* console.log(this.pdfDiv.nativeElement.scrollTop) */
+
+
       this.Urls = this.urlHandler.updateUrls(x, this.Urls);
       /* Don't need to update style no more */
       if (this.style.update) {
         this.style.update = false
       }
+
+      /* this.setPDFscroll(); */
+
     });
   }
 
@@ -73,8 +88,20 @@ export class EditPDFComponent implements OnInit {
     this.updatePDF();
   }
 
-  updatePDF() : void {
+  updatePDFscroll() : void {
+    const container = document.querySelector('.ng2-pdf-viewer-container')
+    this.PDFscroll = container.scrollTop;
+    
+  }
+  setPDFscroll() : void {
+    
+    const container = document.querySelector('.ng2-pdf-viewer-container')
+    container.scrollTop = this.PDFscroll;
+  }
 
+  updatePDF() : void {
+    this.updatePDFscroll()
+    
 
     /* Update the PDF with the modified keywords */
     if(this.key) {
@@ -130,4 +157,14 @@ export class EditPDFComponent implements OnInit {
     return items
   }
 
+  zoomChange(e) {
+    this.pdfZoom = e.value
+    
+  }
+/* 
+  pageRendered(e) {
+    console.log("hello")
+    this.setPDFscroll()
+  }
+ */
 }

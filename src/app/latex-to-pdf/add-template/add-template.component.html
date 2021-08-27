@@ -1,11 +1,17 @@
-<div class="container">
+<div class="container" style="margin-bottom: 100px;padding-bottom: 100px">
   <div>
     <div style="width: 100%; text-align: center;">
       <h1> Copy-paste your config template here</h1>
     </div>
     <br>
-    <ngx-text-editor height="400px" minHeight="50px" [placeholder]="'Enter text here...'" [spellcheck]="true" [(ngModel)]="coverLetterContent"></ngx-text-editor>
+    <div style="background-color: white;border-radius: 25px !important;border-color: transparent">
+      <ngx-text-editor style="border-radius: 25px !important;border:  none !important;" height="400px" minHeight="50px" [placeholder]="'Enter text here...'" [spellcheck]="true" [(ngModel)]="coverLetterContent"></ngx-text-editor>
+    </div>
     <br>
     <button mat-raised-button color="primary" (click)="initPDF()">Create PDF</button>
   </div>
 </div>
+<br>
+<br>
+<br>
+

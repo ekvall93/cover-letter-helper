@@ -20,6 +20,7 @@ import { AddTemplateComponent } from './latex-to-pdf/add-template/add-template.c
 import { EditPDFComponent } from './latex-to-pdf/edit-pdf/edit-pdf.component';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatSelectModule} from '@angular/material/select';
+import {MatSliderModule} from '@angular/material/slider';
 
 
 
@@ -32,6 +33,7 @@ import {MatSelectModule} from '@angular/material/select';
     EditPDFComponent
   ],
   imports: [
+    MatSliderModule,
     MatSelectModule,
     MatButtonToggleModule,
     FlexLayoutModule,

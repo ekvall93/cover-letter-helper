@@ -25,6 +25,10 @@ export class AddTemplateComponent implements OnInit {
               public wordProcessor : WordProcessorService ) { }
 
   ngOnInit(): void {
+    var elements = document.getElementsByClassName("ngx-text-editor-grippie");
+    while(elements.length > 0){
+        elements[0].parentNode.removeChild(elements[0]);
+    }
   }
 
   verifyKeywordSelector() : boolean {
