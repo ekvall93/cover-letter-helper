@@ -16,7 +16,13 @@ import pathlib
 import random
 from .interface import KeyWordOptions, Styles, KeyWord, KeyWords, PathHandler, TexTemplate
 
-config = pdfkit.configuration(wkhtmltopdf="/usr/local/bin/wkhtmltopdf")
+
+def getWkhtmltopdfPath():
+  x = os.popen("which wkhtmltopdf")
+  s = x.read()
+  return s.strip()
+
+config = pdfkit.configuration(wkhtmltopdf=getWkhtmltopdfPath())
 
 class TextHandler:
   """Handles the text used for Latex and for PDF"""

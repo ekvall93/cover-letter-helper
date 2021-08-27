@@ -12,7 +12,7 @@ from typing import IO
 import base64
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="*")
 api = Api(app)
 api.add_resource(Latex2PDFHandler, '/api/Latex2PDFHandler/')
 
@@ -37,7 +37,7 @@ def deletePDF()->str:
 def run_twisted_wsgi():
     resource = WSGIResource(reactor, reactor.getThreadPool(), app)
     site = Site(resource)
-    reactor.listenTCP(4000, site, interface='127.0.0.1')
+    reactor.listenTCP(site, debug=True, interface='0.0.0.0', host='0.0.0.0')
     reactor.run(**reactor_args)
 
 if __name__ == "__main__":
