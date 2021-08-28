@@ -23,6 +23,8 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatSliderModule} from '@angular/material/slider';
 
 
+import { AngularResizedEventModule } from 'angular-resize-event';
+
 
 
 @NgModule({
@@ -33,6 +35,7 @@ import {MatSliderModule} from '@angular/material/slider';
     EditPDFComponent
   ],
   imports: [
+    AngularResizedEventModule,
     MatSliderModule,
     MatSelectModule,
     MatButtonToggleModule,

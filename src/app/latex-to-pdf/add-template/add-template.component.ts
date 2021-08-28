@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import { defaultStyle, keywordSelector } from '../constants';
 import { pdfTemplateOutput, URLS, keyWord } from '../latex2pdfInterface';
 import { FlaskService } from '../services/flask.service';
@@ -25,10 +25,7 @@ export class AddTemplateComponent implements OnInit {
               public wordProcessor : WordProcessorService ) { }
 
   ngOnInit(): void {
-    var elements = document.getElementsByClassName("ngx-text-editor-grippie");
-    while(elements.length > 0){
-        elements[0].parentNode.removeChild(elements[0]);
-    }
+    
   }
 
   verifyKeywordSelector() : boolean {
@@ -81,5 +78,7 @@ export class AddTemplateComponent implements OnInit {
     });
     return items
   }
+
+  
 
 }

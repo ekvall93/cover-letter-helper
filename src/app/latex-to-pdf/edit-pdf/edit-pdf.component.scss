@@ -1,13 +1,37 @@
+
+/* 
 pdf-viewer {
   display: block;
-  height: 100vh;
+  height: 10vh;
   
+} */
+::ng-deep mat-slide-toggle{
+	transform: rotate(180deg)
 }
 
-:host ::ng-deep .pdfViewer .page .canvasWrapper {
-  margin: 10px;
-  border: 1px solid #ccc;
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  border: 2px solid #3D3C3D;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  margin-bottom: 2px;
+  height: 200px;
+  overflow:scroll;
 }
+
+::ng-deep .ng2-pdf-viewer-container {
+  border-radius: 25px !important;
+}
+:host ::ng-deep .pdfViewer .page .canvasWrapper .removePageBorders {
+  margin: 10px;
+  border-radius: 25px !important;
+}
+
+removePageBorders
 
 mat-selection-list {
   max-height: 100%;
@@ -23,6 +47,10 @@ mat-list-option {
   display: none !important;
 }
 
+.roundCorner {
+  border-radius: 25px !important;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24) !important;
+}
 
 .example-form {
   min-width: 150px;

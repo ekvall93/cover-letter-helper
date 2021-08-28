@@ -24,8 +24,6 @@ export class EditPDFComponent implements OnInit {
               private flask: FlaskService,
               private urlHandler: UrlHandlerService) { }
 
-              
-
   style = defaultStyle;
   hmargin = defaultStyle.hmargin;
   vmargin = defaultStyle.vmargin;
@@ -43,11 +41,8 @@ export class EditPDFComponent implements OnInit {
   observableTemplate$: Observable<any>;
   keyWordOptions : KeyWordOptions = {useHighlight : true, useIndexing : true}
 
-
   ngOnInit(): void {
-
     
-
     /* Set Debouncer on the update on PDF to avoid spam */
     this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(debounceTimeValue),
     switchMap(() => this.flask.updateTemplate(this.style,
@@ -60,17 +55,11 @@ export class EditPDFComponent implements OnInit {
         alert("You are using symbols that currently don't work.")
         return;
       }
-
-      /* console.log(this.pdfDiv.nativeElement.scrollTop) */
-
-
       this.Urls = this.urlHandler.updateUrls(x, this.Urls);
       /* Don't need to update style no more */
       if (this.style.update) {
         this.style.update = false
       }
-
-      /* this.setPDFscroll(); */
 
     });
   }
@@ -101,8 +90,7 @@ export class EditPDFComponent implements OnInit {
 
   updatePDF() : void {
     this.updatePDFscroll()
-    
-
+  
     /* Update the PDF with the modified keywords */
     if(this.key) {
       this.keyWords[this.key].word = this.keyWord
@@ -161,10 +149,5 @@ export class EditPDFComponent implements OnInit {
     this.pdfZoom = e.value
     
   }
-/* 
-  pageRendered(e) {
-    console.log("hello")
-    this.setPDFscroll()
-  }
- */
+
 }

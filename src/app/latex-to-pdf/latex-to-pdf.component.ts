@@ -7,6 +7,9 @@ import {URLS } from './latex2pdfInterface';
   styleUrls: ['./latex-to-pdf.component.scss']
 })
 export class LatexToPDFComponent implements OnInit {
+  public screenHeight: number;
+  container: HTMLElement;
+
   coverLetterContent : string;
   keyWords: { [key: string]: string } = {};
   sortedKeywords: [];
@@ -23,7 +26,10 @@ export class LatexToPDFComponent implements OnInit {
     }
    }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.screenHeight = window.innerHeight;
+    this.container = document.getElementById('main')
+  }
 
   addUrls(e: URLS) : void {
     /* Update project URLS */
@@ -43,6 +49,25 @@ export class LatexToPDFComponent implements OnInit {
   addSortedKeywordsEvent(e : []) : void {
     this.sortedKeywords = e;
   }
+  
+  onResized(e) : void {
+
+    console.log(e.newHeight)
+    /* Call scroll function when app chnages height */
+   this.scroll(e.newHeight);
+  }
+  scroll(appHeight: number) : void {
+    /* Adjust scroll when app changes height */
+    console.log(appHeight, this.screenHeight)
+    let diff = appHeight - (this.screenHeight - 200);
+    console.log(diff)
+    if (0 < diff) {
+      this.container.scrollTop = diff
+    } else {
+      this.container.scrollTop = 0;
+    }
+  }
+  
 
 
 

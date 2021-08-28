@@ -1,20 +1,35 @@
-<div class="container" class="background" style="height:100%; overflow: scroll;">
+<!-- <div class="container background" style="height:100%; overflow: scroll;">
     <nav class="navbar">
-    
         <div style="margin: auto" class="navbar-brand">
             <div style="width:70px;margin-top:5px;margin-bottom:5px">
               <img class="images" src="./../assets/images/terran_2.svg">
             </div>
-
         </div>
     </nav>
-
-    <router-outlet></router-outlet>
-
-    
-
-    <div id="footerContent" style="position: fixed; bottom: 0; width:100%">
+    <div (resized)="onResized($event)" style="padding:10px;padding-bottom:80px;flex: 1;">
+        <router-outlet></router-outlet>
+    </div>
+    <div id="footerContent" style=" position:fixed; bottom:0; width:100%;min-width: 100%;">
         <span>Copyright © terran.ai 2021 | All rights reserved</span>
     </div>
+</div> -->
 
-</div>
+        
+    <div fxFill fxLayout="column">
+        <div fxFlex="15" class="roundCorner">
+            <nav class="navbar">
+                <div style="margin: auto" class="navbar-brand">
+                    <div style="width:70px;margin-top:5px;margin-bottom:5px">
+                    <img class="images" src="./../assets/images/terran_2.svg">
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div fxFlex="80" class="roundCorner">
+            <router-outlet class="hidden-router"></router-outlet>
+        </div>
+        <div fxFlex="5" id="footerContent2">
+            <span>Copyright © terran.ai 2021 | All rights reserved</span>
+        </div>
+
+    </div>

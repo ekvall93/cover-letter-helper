@@ -1,4 +1,8 @@
-<!-- <div class="container" class="background" style="height:100%"> -->
-  <app-add-template style="height:100%;min-height:100%; max-height:100%; margin-bottom: 20px;" *ngIf="!this.Urls.currentProjectPath" (newUrlsEvent)="addUrls($event)" (newKeywordsEvent)="addKeywords($event)" (newSortedKeywordsEvent)="addSortedKeywordsEvent($event)"></app-add-template>
-  <app-edit-pdf style="height:100%;min-height:100%; max-height:100%" *ngIf="this.Urls.currentProjectPath" [Urls]="Urls" [keyWords]="keyWords" [sortedKeywords]="sortedKeywords"></app-edit-pdf>
-<!-- </div> -->
+<div style="overflow: scroll" id="main">
+    <div (resized)="onResized($event)"> 
+      <app-add-template *ngIf="!this.Urls.currentProjectPath" (newUrlsEvent)="addUrls($event)" (newKeywordsEvent)="addKeywords($event)" (newSortedKeywordsEvent)="addSortedKeywordsEvent($event)"></app-add-template>
+    </div>
+    
+</div>
+
+  <app-edit-pdf style="height: 100%;max-height: 100%;" *ngIf="this.Urls.currentProjectPath" [Urls]="Urls" [keyWords]="keyWords" [sortedKeywords]="sortedKeywords"></app-edit-pdf>
