@@ -53,4 +53,5 @@ export interface keyWordInfo {
 export interface KeyWordOptions {
   useHighlight: boolean,
   useIndexing: boolean,
+  changeStyle: boolean
 }

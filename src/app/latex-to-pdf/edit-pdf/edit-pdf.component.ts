@@ -6,6 +6,12 @@ import { keyWord, KeyWordOptions, pdfTemplateOutput, URLS } from '../latex2pdfIn
 import { FlaskService } from '../services/flask.service';
 import { UrlHandlerService } from '../services/url-handler.service';
 import { WordProcessorService } from '../services/word-processor.service';
+import { FocusMonitor } from '@angular/cdk/a11y';
+
+import { faSearchMinus, faSearchPlus, faHighlighter, 
+  faListOl, faPalette, faFont, faTextHeight,
+  faArrowsAltH,faArrowsAltV
+ } from '@fortawesome/free-solid-svg-icons';
 
 
 @Component({
@@ -15,15 +21,47 @@ import { WordProcessorService } from '../services/word-processor.service';
 })
 export class EditPDFComponent implements OnInit {
   @ViewChild('pdfDiv') public pdfDiv: ElementRef;
-
-
   @Input() Urls : URLS;
   @Input() keyWords : { [key: string]: keyWord };
   @Input() sortedKeywords : []
+
+  
   constructor(public wordProcessor : WordProcessorService,
               private flask: FlaskService,
-              private urlHandler: UrlHandlerService) { }
+              private urlHandler: UrlHandlerService,
+              private _focusMonitor: FocusMonitor) { }
+  
+  /* Font awesome  */
+  
+  test() {
+    let slider = document.getElementsByClassName('mat-slider');
+    console.log(slider)
+    slider[0].classList.remove("cdk-focused")
+    slider[1].classList.remove("cdk-touch-focused")
+    slider[1].classList.remove("mat-focus-indicator")
+  }
 
+  ngAfterViewInit() {
+    /* this._focusMonitor.stopMonitoring(document.getElementById('test')); */
+
+    let slider = document.getElementsByClassName('mat-slider');
+    console.log(slider)
+    slider[0].classList.remove("cdk-focused")
+    slider[1].classList.remove("cdk-touch-focused")
+    slider[1].classList.remove("mat-focus-indicator")
+    
+}
+
+  faSearchMinus=faSearchMinus;
+  faSearchPlus=faSearchPlus;
+  faHighlighter=faHighlighter;
+  faListOl=faListOl;
+  faPalette=faPalette;
+  faFont=faFont;
+  faTextHeight=faTextHeight;
+  faArrowsAltH=faArrowsAltH;
+  faArrowsAltV=faArrowsAltV;
+  
   style = defaultStyle;
   hmargin = defaultStyle.hmargin;
   vmargin = defaultStyle.vmargin;
@@ -39,10 +77,10 @@ export class EditPDFComponent implements OnInit {
   pdfZoom: number = this.defaultPDFZoom;
   templateUpdater = new Subject();
   observableTemplate$: Observable<any>;
-  keyWordOptions : KeyWordOptions = {useHighlight : true, useIndexing : true}
+  keyWordOptions : KeyWordOptions = {useHighlight : true, useIndexing : true, changeStyle: false}
 
   ngOnInit(): void {
-    
+
     /* Set Debouncer on the update on PDF to avoid spam */
     this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(debounceTimeValue),
     switchMap(() => this.flask.updateTemplate(this.style,
@@ -114,14 +152,24 @@ export class EditPDFComponent implements OnInit {
     this.updatePDF();
   }
 
-  updateHmargin() : void {
+  updateHmargin(e) : void {
+
+    let slider = document.getElementsByClassName('mat-slider');
+    console.log(slider)
+    slider[0].classList.remove("cdk-focused")
+    slider[1].classList.remove("cdk-touch-focused")
+    slider[1].classList.remove("mat-focus-indicator")
+
+    
+    this.hmargin = e.value
     if (this.hmargin) {
       this.style.hmargin = this.hmargin;
       this.style.update = true;
       this.updatePDF();
     }
   }
-  updateVmargin() : void {
+  updateVmargin(e) : void {
+    this.vmargin = e.value
     if (this.vmargin) {
       this.style.vmargin = this.vmargin;
       this.style.update = true;

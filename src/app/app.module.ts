@@ -24,6 +24,7 @@ import {MatSliderModule} from '@angular/material/slider';
 
 
 import { AngularResizedEventModule } from 'angular-resize-event';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
 
@@ -35,6 +36,7 @@ import { AngularResizedEventModule } from 'angular-resize-event';
     EditPDFComponent
   ],
   imports: [
+    FontAwesomeModule,
     AngularResizedEventModule,
     MatSliderModule,
     MatSelectModule,

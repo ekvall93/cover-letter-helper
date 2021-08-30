@@ -52,15 +52,13 @@ export class LatexToPDFComponent implements OnInit {
   
   onResized(e) : void {
 
-    console.log(e.newHeight)
+    
     /* Call scroll function when app chnages height */
    this.scroll(e.newHeight);
   }
   scroll(appHeight: number) : void {
     /* Adjust scroll when app changes height */
-    console.log(appHeight, this.screenHeight)
     let diff = appHeight - (this.screenHeight - 200);
-    console.log(diff)
     if (0 < diff) {
       this.container.scrollTop = diff
     } else {
