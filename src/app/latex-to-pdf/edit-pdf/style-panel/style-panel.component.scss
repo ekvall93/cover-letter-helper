@@ -21,7 +21,9 @@
     margin-right:10px;
 }
 
-
+::ng-deep .mat-form-field-flex {
+    border-radius: 25px !important;
+}
 
 .fontSlider ::ng-deep .mat-slider-thumb {
     background-color: rgba(255, 255, 255,1) !important;
