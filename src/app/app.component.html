@@ -17,16 +17,13 @@
         
     <div fxFill fxLayout="column">
         <div fxFlex="15" class="roundCorner">
-            <nav class="navbar">
-                <div style="margin: auto" class="navbar-brand">
-                    <div style="width:70px;margin-top:5px;margin-bottom:5px">
-                    <img class="images" src="./../assets/images/terran_2.svg">
-                    </div>
-                </div>
-            </nav>
+            <div fxFill fxLayout="row" fxLayoutAlign="center center">
+            
+                <img style="padding:10px" class="images" src="./../assets/images/terran_2.svg">
+            </div>
         </div>
         <div fxFlex="78" class="roundCorner">
-            <router-outlet class="hidden-router"></router-outlet>
+            <router-outlet></router-outlet>
         </div>
         <div fxFlex="7" id="footerContent2">
             <span>Copyright © terran.ai 2021 | All rights reserved</span>

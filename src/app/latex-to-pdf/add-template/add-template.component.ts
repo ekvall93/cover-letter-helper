@@ -19,12 +19,18 @@ export class AddTemplateComponent implements OnInit {
   coverLetterContent : string = exampleText;
   Urls = <URLS>{};
   keyWords: { [key: string]: keyWord } = {};
-  sortedKeywords;;
+  sortedKeywords;
+  textAreaHeight;
   constructor(private flask: FlaskService,
               private urlHandler: UrlHandlerService,
               public wordProcessor : WordProcessorService ) { }
 
   ngOnInit(): void {
+    /* const container = document.querySelector('.container') */
+    var clientHeight = document.getElementById('main').clientHeight;
+
+    this.textAreaHeight = String(Math.round(clientHeight * (3 / 5))) + "px";
+    console.log(this.textAreaHeight);
     
   }
 

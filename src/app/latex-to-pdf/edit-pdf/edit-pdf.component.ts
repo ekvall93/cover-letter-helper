@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ComponentFactoryResolver, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { debounceTimeValue, fonts, defaultStyle, fontSize } from '../constants';
@@ -28,30 +28,8 @@ export class EditPDFComponent implements OnInit {
   
   constructor(public wordProcessor : WordProcessorService,
               private flask: FlaskService,
-              private urlHandler: UrlHandlerService,
-              private _focusMonitor: FocusMonitor) { }
+              private urlHandler: UrlHandlerService) { }
   
-  /* Font awesome  */
-  
-  test() {
-    let slider = document.getElementsByClassName('mat-slider');
-    console.log(slider)
-    slider[0].classList.remove("cdk-focused")
-    slider[1].classList.remove("cdk-touch-focused")
-    slider[1].classList.remove("mat-focus-indicator")
-  }
-
-  ngAfterViewInit() {
-    /* this._focusMonitor.stopMonitoring(document.getElementById('test')); */
-
-    let slider = document.getElementsByClassName('mat-slider');
-    console.log(slider)
-    slider[0].classList.remove("cdk-focused")
-    slider[1].classList.remove("cdk-touch-focused")
-    slider[1].classList.remove("mat-focus-indicator")
-    
-}
-
   faSearchMinus=faSearchMinus;
   faSearchPlus=faSearchPlus;
   faHighlighter=faHighlighter;
@@ -80,6 +58,8 @@ export class EditPDFComponent implements OnInit {
   keyWordOptions : KeyWordOptions = {useHighlight : true, useIndexing : true, changeStyle: false}
 
   ngOnInit(): void {
+
+    
 
     /* Set Debouncer on the update on PDF to avoid spam */
     this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(debounceTimeValue),
@@ -113,6 +93,13 @@ export class EditPDFComponent implements OnInit {
     this.keyWords[this.key].isSelected = true
 
     this.updatePDF();
+  }
+
+  setPDFleftScroll() : void {
+    const container = document.querySelector('.ng2-pdf-viewer-container');
+    let diff = container.scrollWidth - container.clientWidth;
+    console.log(diff);
+    container.scrollLeft = diff / 2;
   }
 
   updatePDFscroll() : void {
@@ -154,12 +141,6 @@ export class EditPDFComponent implements OnInit {
 
   updateHmargin(e) : void {
 
-    let slider = document.getElementsByClassName('mat-slider');
-    console.log(slider)
-    slider[0].classList.remove("cdk-focused")
-    slider[1].classList.remove("cdk-touch-focused")
-    slider[1].classList.remove("mat-focus-indicator")
-
     
     this.hmargin = e.value
     if (this.hmargin) {
@@ -195,6 +176,8 @@ export class EditPDFComponent implements OnInit {
 
   zoomChange(e) {
     this.pdfZoom = e.value
+    setTimeout(()=> {this.setPDFleftScroll()},200)
+    
     
   }
 
