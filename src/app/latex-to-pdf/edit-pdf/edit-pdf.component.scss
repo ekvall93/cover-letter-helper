@@ -28,124 +28,13 @@
 mat-form-field-wrapper {
   padding-bottom: 0px !important;
 }
-.mat-raised-button.mat-terran, .mat-flat-button.mat-terran, .mat-icon-button.mat-terran{
-  background-color: rgba(44, 72, 120, 0.8);
-  color: white
-}
 
-.mat-raised-button.mat-off, .mat-flat-button.mat-off, .mat-icon-button.mat-off{
-  background-color: rgba(255, 255, 255,0.8);
-  color: white;
-  border: 2px solid rgba(44, 72, 120, 0.8) !important;
-  
-}
 
 .clickableAwesomeFont {
   cursor: pointer
 }
 
 
-
-.zoomSlider ::ng-deep .mat-slider-thumb {
-	background-color: rgba(44, 72, 120, 0.8) !important;
-}
-
-.zoomSlider ::ng-deep .mat-slider-thumb-label {
-	background-color: rgba(44, 72, 120, 0.8) !important;
-}
-
-.zoomSlider ::ng-deep .mat-slider-track-fill {
-	background-color: rgba(44, 72, 120, 0.8) !important;
-}
-
-
-.zoomSlider ::ng-deep .mat-slider-thumb {
-	background-color: rgba(44, 72, 120, 0.8) !important;
-}
-
-.zoomSlider ::ng-deep .mat-slider-thumb-label {
-	background-color: rgba(44, 72, 120, 0.8) !important;
-}
-
-.zoomSlider ::ng-deep .mat-slider-track-fill {
-	background-color: rgba(44, 72, 120, 0.8) !important;
-}
-
-
-
-
-.fontSlider ::ng-deep .mat-slider-thumb {
-  background-color: rgba(255, 255, 255,1) !important;
-}
-
-.fontSlider ::ng-deep .mat-slider-thumb-label {
-  background-color: rgba(255, 255, 255,1) !important;
-}
-
-.fontSlider ::ng-deep .mat-slider-track-background {
-  background-color: rgba(255, 255, 255,0.6) !important;
-}
-
-.fontSlider ::ng-deep .mat-slider-thumb {
-  background-color: rgba(255, 255, 255,1) !important;
-}
-
-.fontSlider ::ng-deep .mat-slider-thumb-label {
-  background-color: rgba(255, 255, 255,1) !important;
-}
-
-.fontSlider ::ng-deep .mat-slider-track-background:hover {
-  background-color: rgba(255, 255, 255,0.6) !important;
-}
-
-
-
-
-
-
-.fontSlider ::ng-deep .mat-slider-track-fill {
-	background-color: rgba(255, 255, 255,1) !important;
-}
-
-.fontSlider ::ng-deep .mat-slider-thumb-label-text {
-  color:black;
-}
-
-.fontSlider ::ng-deep .mat-slider-ticks {
-  background-image: none !important;
-}
-
-
-
-
-/* 
-:host ::ng-deep .mat-accent .mat-slider-track-fill {
-  background-color: #35506a !important;
-  opacity: 0.2 !important;
-}
-:host ::ng-deep .mat-slider-track-background {
-  background-color: #35506a !important;
-  opacity: 0.2 !important;
-}
-:host ::ng-deep .mat-slider:hover .mat-slider-track-background {
-  background-color: #35506a !important;
-  opacity: 0.2 !important;
-}
-
-:host ::ng-deep .mat-slider:not(.mat-slider-disabled).cdk-mouse-focused .mat-slider-thumb {
-  background-color: red !important;
-  border: 1px solid #a2b4c4 !important;
-}
-
-:host ::ng-deep .mat-slider-thumb {
-  
-  background-color: #b0c2d1 !important;
-  border: 1px solid #a2b4c4 !important;
-}
-
-:host ::ng-deep .mat-slider-min-value:not(.mat-slider-thumb-label-showing) .mat-slider-thumb {
-  background-color: #b0c2d1 !important;
-} */
 
 .column {
   display: flex;
@@ -168,16 +57,6 @@ mat-form-field-wrapper {
   border-radius: 25px !important;
 }
 
-removePageBorders
-
-mat-selection-list {
-  max-height: 100%;
-  overflow: auto;
-}
-
-mat-list-option {
-  height: auto;
-}
 
 
 ::ng-deep .ngx-toolbar {

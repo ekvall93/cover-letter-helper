@@ -1,0 +1,40 @@
+.example-full-width {
+    width: 100%;
+  }
+
+  .roundCorner {
+    border-radius: 25px !important;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24) !important;
+  }
+
+  .mat-raised-button.mat-terran, .mat-flat-button.mat-terran, .mat-icon-button.mat-terran{
+    background-color: rgba(44, 72, 120, 0.8);
+    color: white
+  }
+  
+  .mat-raised-button.mat-off, .mat-flat-button.mat-off, .mat-icon-button.mat-off{
+    background-color: rgba(255, 255, 255,0.8);
+    color: white;
+    border: 2px solid rgba(44, 72, 120, 0.8) !important;
+    
+  }
+
+.iconContainer {
+    float: right; 
+    padding-right: 16px;
+    padding-top: 10px
+}
+
+.buttonSize {
+    width:59.5px;
+    height:59.5px
+}
+
+.floatLeftContainer {
+    float:left; 
+    margin-right:5px
+}
+
+#form {
+    background-color: rgba(44, 72, 120, 0.8);margin-bottom:10px; width:350px
+}

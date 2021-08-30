@@ -25,6 +25,10 @@ import {MatSliderModule} from '@angular/material/slider';
 
 import { AngularResizedEventModule } from 'angular-resize-event';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { KeyWordsComponent } from './latex-to-pdf/edit-pdf/key-words/key-words.component';
+import { PdfZoomComponent } from './latex-to-pdf/edit-pdf/pdf-zoom/pdf-zoom.component';
+import { StylePanelComponent } from './latex-to-pdf/edit-pdf/style-panel/style-panel.component';
+import { WorkingPanelComponent } from './latex-to-pdf/edit-pdf/working-panel/working-panel.component';
 
 
 
@@ -33,7 +37,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     AppComponent,
     LatexToPDFComponent,
     AddTemplateComponent,
-    EditPDFComponent
+    EditPDFComponent,
+    KeyWordsComponent,
+    PdfZoomComponent,
+    StylePanelComponent,
+    WorkingPanelComponent
   ],
   imports: [
     FontAwesomeModule,

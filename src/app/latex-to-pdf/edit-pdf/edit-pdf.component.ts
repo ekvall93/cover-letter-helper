@@ -1,18 +1,11 @@
-import { Component, ComponentFactoryResolver, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { fromEvent, Observable, Subject } from 'rxjs';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { debounceTimeValue, fonts, defaultStyle, fontSize } from '../constants';
 import { keyWord, KeyWordOptions, pdfTemplateOutput, URLS } from '../latex2pdfInterface';
 import { FlaskService } from '../services/flask.service';
 import { UrlHandlerService } from '../services/url-handler.service';
 import { WordProcessorService } from '../services/word-processor.service';
-import { FocusMonitor } from '@angular/cdk/a11y';
-
-import { faSearchMinus, faSearchPlus, faHighlighter, 
-  faListOl, faPalette, faFont, faTextHeight,
-  faArrowsAltH,faArrowsAltV
- } from '@fortawesome/free-solid-svg-icons';
-
 
 @Component({
   selector: 'app-edit-pdf',
@@ -30,22 +23,11 @@ export class EditPDFComponent implements OnInit {
               private flask: FlaskService,
               private urlHandler: UrlHandlerService) { }
   
-  faSearchMinus=faSearchMinus;
-  faSearchPlus=faSearchPlus;
-  faHighlighter=faHighlighter;
-  faListOl=faListOl;
-  faPalette=faPalette;
-  faFont=faFont;
-  faTextHeight=faTextHeight;
-  faArrowsAltH=faArrowsAltH;
-  faArrowsAltV=faArrowsAltV;
   
   style = defaultStyle;
-  hmargin = defaultStyle.hmargin;
-  vmargin = defaultStyle.vmargin;
-  font = defaultStyle.font;
-  fontSize = defaultStyle.fontSize;
-  fontSizes = fontSize;
+  hmargin;
+  vmargin;
+  font;
   fonts = fonts;
   keywordSelected = false;
   keyWord: string = "";
@@ -58,8 +40,6 @@ export class EditPDFComponent implements OnInit {
   keyWordOptions : KeyWordOptions = {useHighlight : true, useIndexing : true, changeStyle: false}
 
   ngOnInit(): void {
-
-    
 
     /* Set Debouncer on the update on PDF to avoid spam */
     this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(debounceTimeValue),
@@ -83,6 +63,7 @@ export class EditPDFComponent implements OnInit {
   }
 
   selectKeyword(key : string) : void {
+    
     /* Select the keyword that the used want to modify */
     this.keywordSelected = true;
     this.keyWord  = this.keyWords[key].word;
@@ -98,7 +79,6 @@ export class EditPDFComponent implements OnInit {
   setPDFleftScroll() : void {
     const container = document.querySelector('.ng2-pdf-viewer-container');
     let diff = container.scrollWidth - container.clientWidth;
-    console.log(diff);
     container.scrollLeft = diff / 2;
   }
 
@@ -113,6 +93,20 @@ export class EditPDFComponent implements OnInit {
     container.scrollTop = this.PDFscroll;
   }
 
+  updateKeyword(e) {
+    this.keyWord = e;
+    this.updatePDF();
+  }
+
+  updateStyles(e : KeyWordOptions) {
+    this.keyWordOptions = e;
+  }
+
+  updateSettings(e : KeyWordOptions) {
+    this.keyWordOptions = e;
+    this.updatePDF();
+  }
+
   updatePDF() : void {
     this.updatePDFscroll()
   
@@ -123,18 +117,18 @@ export class EditPDFComponent implements OnInit {
     this.templateUpdater.next();
   }
 
-  updateFont() : void
+  updateFont(font: string) : void
   {
     /* Update font */
-    this.style.font = this.font;
+    this.style.font = font;
     this.style.update = true;
     this.updatePDF();
   }
 
-  updateFontSize() : void
+  updateFontSize(fontSize: number) : void
   {
     /* Update font */
-    this.style.fontSize= this.fontSize;
+    this.style.fontSize= fontSize;
     this.style.update = true;
     this.updatePDF();
   }
@@ -176,7 +170,7 @@ export class EditPDFComponent implements OnInit {
 
   zoomChange(e) {
     this.pdfZoom = e.value
-    setTimeout(()=> {this.setPDFleftScroll()},200)
+    setTimeout(()=> {this.setPDFleftScroll()},20)
     
     
   }

@@ -1,159 +1,29 @@
 <div *ngIf="this.Urls.currentProjectPath" fxLayout="row" style="max-height: 100%; height:100%">
-  
   <div fxFlex="20">
     <div fxLayout="column" style="max-height: 100%;">
       <div fxFlex="100" class="roundCorner" style="background-color: white; margin: 5px; overflow: scroll;">
-    
-        <mat-selection-list style="overflow-y: scroll;" [multiple]="false">
-          <mat-list-option style="overflow-y: scroll;" *ngFor="let word of sortedKeywords" (click)="selectKeyword(word[0])">
-              <div><b>{{word[1]["number"]}}.</b> {{word[1]["word"]}}</div>
-          </mat-list-option>
-        </mat-selection-list>
-      </div>
-      
+        <app-key-words [keyWords]="sortedKeywords" (selectedKeyWordsEvent)="selectKeyword($event)"></app-key-words>
+      </div> 
     </div>
-
   </div>
-
   <div fxFlex="80" class="roundCorner" style="position: relative; background-color: white;margin: 5px;overflow: hidden; ">
     <div fxLayout="row" style="max-height: 100%;">
-      
-      <div>
-        <div style="position: absolute; top: 0; z-index: 10; top: 50%;
-                    -ms-transform: translateY(-50%);
-                    transform: translateY(-50%);float: right;
-                    margin: 5px;right: 0;">
-          <div>
-            <fa-icon style="float:right;padding-right:18px; color:rgba(44, 72, 120, 0.8);" size="1x" [icon]="faSearchPlus"></fa-icon>
+      <app-pdf-zoom (zoomEvent)="zoomChange($event)"></app-pdf-zoom>
+      <div fxLayout="column" fxLayoutAlign="space-around center" style="width:100%; z-index: 10; position: absolute;bottom: 0;background-color: rgba(255, 255, 255,0.9);margin-top:10px">
+          <div *ngIf="keyWordOptions.changeStyle" class="roundCorner" style="background-color: rgba(44, 72, 120, 0.8); width:520px; height:200px;margin-top:10px;">
+            <app-style-panel (hmarginEvent)="updateHmargin($event)" (vmarginEvent)="updateVmargin($event)" (fontSizeEvent)="updateFontSize($event)" (fontEvent)="updateFont($event)"></app-style-panel>
           </div>
-          <div style="float: left; clear: both;margin: 0;">
-            <mat-slider
-              class="zoomSlider"
-              vertical
-              invert
-              thumbLabel
-              [displayWith]="formatLabel"
-              tickInterval="0.1"
-              step="0.1"
-              min="0.5"
-              max="1.5"
-              aria-label="zoom"
-              [value]="defaultPDFZoom"
-              (change)="zoomChange($event)">
-            </mat-slider>
-          </div>
-          <div style="float: left; clear: both;margin: 0;padding-left:18px">
-            <fa-icon [ngStyle]="{'color':'rgba(44, 72, 120, 0.8)'}" size="1x" [icon]="faSearchMinus"></fa-icon>
-          </div>
-        </div>
-        
-        <div fxLayout="column" fxLayoutAlign="space-around center" style="width:100%; z-index: 10; position: absolute;bottom: 0;background-color: rgba(255, 255, 255,0.9);margin-top:10px">
-
-            <div *ngIf="keyWordOptions.changeStyle" class="roundCorner" style="background-color: rgba(44, 72, 120, 0.8); width:520px; height:200px; margin-bottom:10px;">
-              <div fxLayout="column" fxLayoutAlign="space-around center"style="width:100%;height:100%" >
-                <div fxLayout="row" fxLayoutAlign="space-around center" style="width:100%;height:100%">
-                  <div style="margin-top:15px;">
-                    <mat-slider
-                      style="margin-bottom: 15px;"
-                      class="fontSlider"
-                      thumbLabel
-                      [displayWith]="formatLabel"
-                      tickInterval="1"
-                      step="1"
-                      min="0"
-                      max="100"
-                      aria-label="font"
-                      [value]="hmargin"
-                      (change)="updateHmargin($event)">
-                    </mat-slider>
-                    <fa-icon style="color:rgba(255, 255, 255,0.9)" size="2x" [icon]="faArrowsAltH"></fa-icon>
-                  </div>
-                  <div>
-                    <div style="background-color: rgba(255, 255, 255, 0.8);border-radius:25px; margin:10px; float:left">
-                      <mat-form-field appearance="fill" style="border-radius:25px !important">
-                        <mat-label>Font</mat-label>
-                        <mat-select [(ngModel)]="font" (ngModelChange)="updateFont()">
-                          <mat-option *ngFor="let f of fonts" [value]="f.value">
-                            {{f.viewValue}}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                    </div>
-                    <div style="float:right; margin-top:25px; margin-right:10px">
-                      <fa-icon style="color:rgba(255, 255, 255,0.9); float:right" size="2x" [icon]="faFont"></fa-icon> 
-                    </div>
-                  </div>
-                </div>
-                <div fxLayout="row" fxLayoutAlign="space-around center" style="width:100%;height:100%">
-                  <div style="margin-top:15px;">
-                    <mat-slider
-                      style="margin-bottom: 15px;margin-right:4px"
-                      class="fontSlider"
-                      thumbLabel
-                      [displayWith]="formatLabel"
-                      tickInterval="1"
-                      step="1"
-                      min="0"
-                      max="100"
-                      aria-label="fontH"
-                      [value]="vmargin"
-                      (change)="updateVmargin($event)">
-                    </mat-slider>
-                    <fa-icon style="color:rgba(255, 255, 255,0.9)" size="2x" [icon]="faArrowsAltV"></fa-icon>
-                  </div>
-                  <div>
-                    <div style="background-color: rgba(255, 255, 255, 0.8);border-radius:25px; margin:10px; float:left">
-                      <mat-form-field appearance="fill">
-                        <mat-label>Font size</mat-label>
-                        <mat-select [(value)]="fontSize" [(ngModel)]="fontSize" (ngModelChange)="updateFontSize()">
-                          <mat-option *ngFor="let fs of fontSizes" [value]="fs.value">
-                            {{fs.viewValue}}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                    </div>
-                    <div style="float:right; margin-top:25px; margin-right:10px">
-                      <fa-icon style="color:rgba(255, 255, 255,0.9); float:right" size="2x" [icon]="faTextHeight"></fa-icon> 
-                    </div>
-                  </div>   
-                </div>
-              </div>
-            </div>
-
-            <div style="margin-top: 10px">
-              <div style="float:left; margin-right:5px">
-                <button style="width:59.5px;height:59.5px;position: relative;margin-right:5px" mat-icon-button (click)='keyWordOptions.useHighlight=!keyWordOptions.useHighlight;updatePDF()' [color]="keyWordOptions.useHighlight ? 'terran' : 'off'">
-                  <fa-icon [ngStyle]="{'color' : keyWordOptions.useHighlight  ? 'rgba(255, 255, 255,0.8)' : 'rgba(44, 72, 120, 0.8)'}" style="float: right; padding-right: 16px;padding-top: 10px" size="2x" [icon]="faHighlighter"></fa-icon>
-                </button>
-                <button style="width:59.5px;height:59.5px" mat-icon-button (click)="keyWordOptions.useIndexing=!keyWordOptions.useIndexing;updatePDF()" [color]="keyWordOptions.useIndexing ? 'terran' : 'off'">
-                  <fa-icon [ngStyle]="{'color' : keyWordOptions.useIndexing  ? 'rgba(255, 255, 255,0.8)' : 'rgba(44, 72, 120, 0.8)'}" style="float: right; padding-right: 16px;padding-top: 10px" size="2x" [icon]="faListOl"></fa-icon>
-                </button>
-              </div>
-              <div style="float:left; margin-right:5px">
-                <form class="example-form">
-                  <mat-form-field class="example-full-width roundCorner" appearance="fill" style="background-color: rgba(44, 72, 120, 0.8);margin-bottom:10px; width:350px">
-                    <mat-label style="color: white;">Change keyword</mat-label>
-                    <input matInput [disabled]="!keywordSelected" [(ngModel)]="keyWord" (input)="updatePDF()" style="color: white;" placeholder="Select keyword">
-                  </mat-form-field>
-                </form>
-              </div>
-              <div style="float: right;">
-                <button style="width:59.5px;height:59.5px;position: relative;" mat-icon-button (click)="keyWordOptions.changeStyle=!keyWordOptions.changeStyle;" [color]="!keyWordOptions.changeStyle ? 'terran' : 'off'">
-                  <fa-icon [ngStyle]="{'color' : !keyWordOptions.changeStyle  ? 'rgba(255, 255, 255,0.8)' : 'rgba(44, 72, 120, 0.8)'}" style="float: right; padding-right: 14px; padding-top: 9px" size="2x" [icon]="faPalette"></fa-icon>
-                </button>
-              </div>
-            </div>
-            
-        </div>
-        <pdf-viewer 
-          style="border-radius: 25px !important;"
-          #pdfDiv id="pdfDiv" 
-          [src]="this.Urls.currentProjectPath"
-          [original-size]="false"
-          [zoom]="pdfZoom"
-          (pages-initialized)="setPDFscroll();setPDFleftScroll()">
-        </pdf-viewer>
+          <app-working-panel [keyWord]="keyWord" [keywordSelected]="keywordSelected" (keyWordOptionsEvent)="updateSettings($event)" (styleOptionsEvent)="updateStyles($event)" (keywordEvent)=updateKeyword($event)></app-working-panel>          
       </div>
+      <pdf-viewer 
+        style="border-radius: 25px !important;"
+        #pdfDiv id="pdfDiv" 
+        [src]="this.Urls.currentProjectPath"
+        [original-size]="false"
+        [zoom]="pdfZoom"
+        (pages-initialized)="setPDFscroll();setPDFleftScroll()">
+      </pdf-viewer>
+      
     </div>
   </div>
 </div>
