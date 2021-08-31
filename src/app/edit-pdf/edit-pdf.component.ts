@@ -6,7 +6,7 @@ import { debounceTimeValue, fonts, defaultStyle, fontSize } from './../constants
 import { keyWord, KeyWordOptions, pdfTemplateOutput, URLS } from './../latex2pdfInterface';
 import { FlaskService } from '../services/flask.service';
 import { UrlHandlerService } from '../services/url-handler.service';
-import { WordProcessorService } from '../services/word-processor.service';
+import { WordProcessorService } from './../services/word-processor.service';
 
 @Component({
   selector: 'app-edit-pdf',
@@ -15,10 +15,6 @@ import { WordProcessorService } from '../services/word-processor.service';
 })
 export class EditPDFComponent implements OnInit {
   @ViewChild('pdfDiv') public pdfDiv: ElementRef;
-  /* @Input() Urls : URLS;
-  @Input() keyWords : { [key: string]: keyWord };
-  @Input() sortedKeywords : [] */
-
   
   constructor(public wordProcessor : WordProcessorService,
               private flask: FlaskService,
@@ -46,15 +42,36 @@ export class EditPDFComponent implements OnInit {
   keyWordOptions : KeyWordOptions = {useHighlight : true, useIndexing : true, changeStyle: false}
 
   ngOnInit(): void {
-
     this.route
       .queryParams
       .subscribe(params => {
-        console.log(params["Urls"])
-        console.log(params["keyWords"])
         this.Urls = JSON.parse(params["Urls"])
         this.keyWords = JSON.parse(params["keyWords"])
         this.sortedKeywords = JSON.parse(params["sortedKeywords"])
+        let oldKeyWords = this.getKeyWords();
+        if (oldKeyWords) {
+          for (let key in oldKeyWords) {
+            let value = oldKeyWords[key];
+            if (key in this.keyWords) {
+              this.keyWords[key].word = value.word
+            }
+            // Use `key` and `value`
+        }
+
+        let tmp = [];
+        for (let x of this.sortedKeywords) {
+          if(x[0] in oldKeyWords) {
+            let y = x[1]
+            y.word = oldKeyWords[x[0]].word
+            tmp.push([x[0], y])
+
+          }
+        }
+        this.sortedKeywords = tmp;
+        }
+
+        setTimeout(()=> {this.updatePDF()},20)
+        
       });
 
     /* Set Debouncer on the update on PDF to avoid spam */
@@ -75,7 +92,16 @@ export class EditPDFComponent implements OnInit {
         this.style.update = false
       }
 
+      this.saveKeyWords();
+
     });
+  }
+
+  saveKeyWords() : void {
+    localStorage.setItem('keyWords', JSON.stringify(this.keyWords));
+  }
+  getKeyWords() : any {
+    return JSON.parse(localStorage.getItem('keyWords'))
   }
 
   selectKeyword(key : string) : void {
@@ -88,7 +114,6 @@ export class EditPDFComponent implements OnInit {
     }
     this.key = key;
     this.keyWords[this.key].isSelected = true
-
     this.updatePDF();
   }
 
@@ -125,12 +150,22 @@ export class EditPDFComponent implements OnInit {
 
   updatePDF() : void {
     this.updatePDFscroll()
-  
+    
     /* Update the PDF with the modified keywords */
     if(this.key) {
-      this.keyWords[this.key].word = this.keyWord
+      this.keyWords[this.key].word = this.keyWord;
+      this.updateSortedKeyWords();
     }
     this.templateUpdater.next();
+  }
+
+  updateSortedKeyWords() {
+    for (let i in this.sortedKeywords) {
+      if(this.sortedKeywords[i][0] == this.key) {
+        this.sortedKeywords[i][1].word = this.keyWord
+        break;
+      }
+    }
   }
 
   updateFont(font: string) : void
@@ -150,8 +185,6 @@ export class EditPDFComponent implements OnInit {
   }
 
   updateHmargin(e) : void {
-
-    
     this.hmargin = e.value
     if (this.hmargin) {
       this.style.hmargin = this.hmargin;
@@ -173,17 +206,7 @@ export class EditPDFComponent implements OnInit {
     this.templateUpdater.unsubscribe();
   }
 
-  sortKeywords() {
-    var items = Object.keys(this.keyWords).map(function(key) {
-      return [key, this.keyWords[key]];
-    });
-    // Sort the array based on the second element
-    items.sort(function(first, second) {
-      return first[1]["number"] - second[1]["number"];
-    });
-    return items
-  }
-
+  
   zoomChange(e) {
     this.pdfZoom = e.value
     setTimeout(()=> {this.setPDFleftScroll()},20)
