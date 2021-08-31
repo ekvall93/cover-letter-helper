@@ -1,9 +1,15 @@
 <div fxFill fxLayout="column">
     <div fxFlex="15" class="roundCorner">
         <div fxFill fxLayout="row" fxLayoutAlign="center center">
-            <a routerLink='/' routerLinkActive="active">
+
+            <a *ngIf="this.href!='/';else img" routerLink='/' routerLinkActive="active" (click)="href='/'">
                 <img style="padding:10px" class="images" src="./../assets/images/terran_2.svg">
             </a>
+
+            <ng-template #img>
+                <img style="padding:10px" class="images" src="./../assets/images/terran_2.svg">
+            </ng-template>
+
         </div>
     </div>
     <div fxFlex="78" class="roundCorner">

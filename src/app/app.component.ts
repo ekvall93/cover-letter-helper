@@ -1,4 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { UrlKeeperService } from './services/url-keeper.service';
 
 @Component({
   selector: 'app-root',
@@ -6,11 +8,15 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent  implements OnInit {
-  public screenHeight: number;
   container: HTMLElement;
+  public href: string;
+
+  constructor(private router: Router, private urlKepeer: UrlKeeperService) {
+
+  }
   ngOnInit() {
-    this.screenHeight = window.innerHeight;
-    this.container = document.getElementById('main')
+    this.href = this.router.url;
+    this.urlKepeer.urlKeeper.subscribe(data=> { this.href=data }) 
   }
 
   

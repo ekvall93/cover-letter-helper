@@ -1,13 +1,14 @@
-import { Component, OnInit, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { defaultStyle, keywordSelector } from './../constants';
 import { pdfTemplateOutput, URLS, keyWord } from './../latex2pdfInterface';
 import { FlaskService } from '../services/flask.service';
 import { UrlHandlerService } from '../services/url-handler.service';
 import { WordProcessorService } from '../services/word-processor.service';
-import {exampleText} from './example'
+import {exampleText, exampleTextPreProcessed} from './example'
 import { Editor, Toolbar } from 'ngx-editor';
 import { faHighlighter } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
+import { UrlKeeperService } from '../services/url-keeper.service';
 
 
 @Component({
@@ -17,10 +18,8 @@ import { Router } from '@angular/router';
 })
 
 export class AddTemplateComponent implements OnInit {
-  @Output() newUrlsEvent = new EventEmitter<URLS>();
-  @Output() newKeywordsEvent = new EventEmitter<{ [key: string]: keyWord }>();
-  @Output() newSortedKeywordsEvent = new EventEmitter<[]>();
-  coverLetterContent : string = exampleText;
+  exampleTextPreProcessed :string  = exampleTextPreProcessed;
+  coverLetterContent: string;
   Urls = <URLS>{};
   keyWords: { [key: string]: keyWord } = {};
   sortedKeywords;
@@ -36,7 +35,7 @@ export class AddTemplateComponent implements OnInit {
   constructor(private flask: FlaskService,
               private urlHandler: UrlHandlerService,
               public wordProcessor : WordProcessorService,
-              private router : Router) { }
+              private router : Router, private urlKepeer: UrlKeeperService) { }
   
   ngAfterViewInit()  {
     var node = document.querySelector('[title="Bold"]') as HTMLElement;
@@ -44,7 +43,7 @@ export class AddTemplateComponent implements OnInit {
   }
   ngOnInit(): void {
 
-    
+    this.setTemplate();
 
     this.editor = new Editor();
 
@@ -52,8 +51,16 @@ export class AddTemplateComponent implements OnInit {
     var clientHeight = document.getElementById('main').clientHeight;
 
     this.textAreaHeight = String(Math.round(clientHeight * (3 / 5))) + "px";
-    console.log(this.textAreaHeight);
-    
+  }
+
+  setTemplate() : void {
+    /* Set template */
+    var userTemplate = localStorage.getItem('userTemplate');
+    if (userTemplate) {
+      this.coverLetterContent = userTemplate;
+    } else {
+      this.coverLetterContent = exampleText;
+    }
   }
 
   verifyKeywordSelector() : boolean {
@@ -69,8 +76,17 @@ export class AddTemplateComponent implements OnInit {
     return text
   }
 
+  saveUserTemplate(t : string) : void {
+    /* Save the users template */
+    if (this.exampleTextPreProcessed.trim() != t.trim()) {
+      localStorage.setItem('userTemplate', this.coverLetterContent)
+    }
+  }
+
   initPDF() : void {
+    /* console.log(this.exampleText == this.coverLetterContent) */
     const text : string = this.getTemplateText()
+    this.saveUserTemplate(text);
     /* Send the users template to render the initial PDF */
     if (this.verifyKeywordSelector()) {
       alert("The number of keyword selectors i.e., '?@', dont match!")
@@ -85,16 +101,14 @@ export class AddTemplateComponent implements OnInit {
       this.Urls = this.urlHandler.initiateUrls(x);
       this.keyWords = this.getKeywords(x.keyWords);
       this.sortedKeywords = this.sortKeywords(this.keyWords)
-      /* this.sendItems(); */
+      
+
+      this.urlKepeer.setParam('/edit-pdf');
+
       this.router.navigate(["/edit-pdf"], { queryParams: {Urls: JSON.stringify(this.Urls), keyWords: JSON.stringify(this.keyWords), sortedKeywords: JSON.stringify(this.sortedKeywords)}});
     });
   }
 
-  sendItems() : void {
-    this.newUrlsEvent.emit(this.Urls);
-    this.newKeywordsEvent.emit(this.keyWords);
-    this.newSortedKeywordsEvent.emit(this.sortedKeywords);
-  }
 
   getKeywords(keyWords : { [key: string]: keyWord }) : { [key: string]: keyWord } {
     /* Gather all keywords that the user have added */
