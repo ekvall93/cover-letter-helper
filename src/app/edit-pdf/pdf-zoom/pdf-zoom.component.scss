@@ -1,0 +1,39 @@
+#zoomContainer {
+    position: absolute; 
+    top: 0;
+    z-index: 10;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);float: right;
+    margin: 5px;
+    right: 0;
+}
+
+.zoomIconColor {
+    color:rgba(44, 72, 120, 0.8);
+}
+
+#topIcon {
+    float:right; 
+    padding-right:18px; 
+}
+
+#bottomIcon {
+    float: left; 
+    clear: both;
+    margin: 0;
+    padding-left:18px
+}
+
+.zoomSlider ::ng-deep .mat-slider-thumb {
+	background-color: rgba(44, 72, 120, 0.8) !important;
+}
+
+.zoomSlider ::ng-deep .mat-slider-thumb-label {
+	background-color: rgba(44, 72, 120, 0.8) !important;
+}
+
+.zoomSlider ::ng-deep .mat-slider-track-fill {
+	background-color: rgba(44, 72, 120, 0.8) !important;
+}
+

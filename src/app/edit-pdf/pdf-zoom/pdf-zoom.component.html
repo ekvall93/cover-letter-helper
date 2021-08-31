@@ -1,0 +1,23 @@
+<div id="zoomContainer">
+    <div id="topIcon">
+        <fa-icon class="zoomIconColor" size="1x" [icon]="faSearchPlus"></fa-icon>
+    </div>
+    <div id="sliderContainer">
+        <mat-slider
+            class="zoomSlider"
+            vertical
+            invert
+            thumbLabel 
+            tickInterval="0.1"
+            step="0.1"
+            min="0.5"
+            max="1.5"
+            aria-label="zoom"
+            [value]="defaultPDFZoom"
+            (change)="sendZoomValue($event)">
+        </mat-slider>
+    </div>
+    <div id="bottomIcon">
+        <fa-icon class="zoomIconColor" size="1x" [icon]="faSearchMinus"></fa-icon>
+    </div>
+</div>

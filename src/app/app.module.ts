@@ -15,9 +15,9 @@ import {MatListModule} from '@angular/material/list';
 import {MatInputModule} from '@angular/material/input';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
-import { LatexToPDFComponent } from './latex-to-pdf/latex-to-pdf.component';
-import { AddTemplateComponent } from './latex-to-pdf/add-template/add-template.component';
-import { EditPDFComponent } from './latex-to-pdf/edit-pdf/edit-pdf.component';
+import { LatexToPDFComponent } from './latex-to-pdf2/latex-to-pdf.component';
+import { AddTemplateComponent } from './add-template/add-template.component';
+import { EditPDFComponent } from './edit-pdf/edit-pdf.component';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSliderModule} from '@angular/material/slider';
@@ -25,10 +25,10 @@ import {MatSliderModule} from '@angular/material/slider';
 
 import { AngularResizedEventModule } from 'angular-resize-event';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { KeyWordsComponent } from './latex-to-pdf/edit-pdf/key-words/key-words.component';
-import { PdfZoomComponent } from './latex-to-pdf/edit-pdf/pdf-zoom/pdf-zoom.component';
-import { StylePanelComponent } from './latex-to-pdf/edit-pdf/style-panel/style-panel.component';
-import { WorkingPanelComponent } from './latex-to-pdf/edit-pdf/working-panel/working-panel.component';
+import { KeyWordsComponent } from './edit-pdf/key-words/key-words.component';
+import { PdfZoomComponent } from './edit-pdf/pdf-zoom/pdf-zoom.component';
+import { StylePanelComponent } from './edit-pdf/style-panel/style-panel.component';
+import { WorkingPanelComponent } from './edit-pdf/working-panel/working-panel.component';
 import { NgxEditorModule } from 'ngx-editor';
 
 
