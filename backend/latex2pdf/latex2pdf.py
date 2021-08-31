@@ -15,7 +15,7 @@ from typing import List, Dict, Union
 import pathlib
 import random
 from .interface import KeyWordOptions, Styles, KeyWord, KeyWords, PathHandler, TexTemplate
-
+import copy
 
 def getWkhtmltopdfPath():
   x = os.popen("which wkhtmltopdf")
@@ -107,7 +107,7 @@ class TextHandler:
   def getKeyWords(self, template: str)->KeyWords:
     """Find all keywords in the user's template text"""
     _keyWords = re.findall(fr'\{keywordSelector}.*?\{keywordSelector}', template)
-    keyWords = self.reserved_keywords
+    keyWords = copy.deepcopy(self.reserved_keywords)
     #Loop to keep order.
     for w in _keyWords:
       if w not in keyWords:
@@ -246,12 +246,10 @@ class Latex2PDF(TextHandler, FileHandler):
     """Initiate project for user"""
     try:
       Path = self.initProjectPaths()
-
       templateText = self.preProcessTemplate(templateText)
       self.writeFile(Path.projectDir, "templateText.txt", templateText)
       template = self.addMainText(templateText, styles)
       self.writeFile(Path.projectDir, "template.txt", template)
-
       keyWords = self.getKeyWords(template)
       keyWordOptions = KeyWordOptions({"useIndexing": True, "useHighlight" : True})
       template = self.modifyKeyword(template, keyWords, keyWordOptions, True)
