@@ -14,8 +14,6 @@ import { MainPipe } from './safePipe/main-pipe.module';
 import {MatListModule} from '@angular/material/list';
 import {MatInputModule} from '@angular/material/input';
 import { FlexLayoutModule } from '@angular/flex-layout';
-
-import { LatexToPDFComponent } from './latex-to-pdf2/latex-to-pdf.component';
 import { AddTemplateComponent } from './add-template/add-template.component';
 import { EditPDFComponent } from './edit-pdf/edit-pdf.component';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
@@ -36,7 +34,6 @@ import { NgxEditorModule } from 'ngx-editor';
 @NgModule({
   declarations: [
     AppComponent,
-    LatexToPDFComponent,
     AddTemplateComponent,
     EditPDFComponent,
     KeyWordsComponent,

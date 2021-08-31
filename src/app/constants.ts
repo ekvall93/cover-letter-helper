@@ -57,3 +57,6 @@ export const  fonts : Fonts[] = [
 {value: "times", viewValue: "times"},
 {value: "yfonts", viewValue: "yfonts"}
 ]
+
+export const pdfFile : string =  "cover.pdf";
+export const downloadPdfFile : string =  "cover_letter";

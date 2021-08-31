@@ -21,8 +21,8 @@ fileHandler = FileHandler()
 @app.route('/api/readPDF/<path:path>')
 def readPDF(path)->IO[bytes]:
   """Send PDF file to user"""
-  path = fileHandler.validateFolderPath(path)
-  pdfPath = path + pdfFileName
+  pdfPath = fileHandler.validateFolderPath(path)
+  """ pdfPath = path + pdfFileName """
   pdf = open(pdfPath, 'rb')
   return send_file(pdf, "test.pdf")
 

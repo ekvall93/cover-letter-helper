@@ -12,6 +12,7 @@ export class UrlHandlerService {
   constructor() { }
 
   readPDFPath(path : string): string {
+    /* return this.apiUrl + readPFDapi + path + "cover.pdf"; */
     return this.apiUrl + readPFDapi + path;
   }
 
