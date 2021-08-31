@@ -17,13 +17,13 @@ export class WorkingPanelComponent implements OnInit {
   faHighlighter=faHighlighter;
   faListOl=faListOl;
   faPalette=faPalette;
+  
 
   keyWordOptions : KeyWordOptions = {useHighlight : true, useIndexing : true, changeStyle: false}
   
   constructor() { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   sendUpdatePDF() {
     this.keyWordOptionsEvent.emit(this.keyWordOptions)
@@ -36,6 +36,8 @@ export class WorkingPanelComponent implements OnInit {
   sendKeyword() {
     this.keywordEvent.emit(this.keyWord);
   }
+
+  
   
 
 }

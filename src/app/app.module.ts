@@ -29,6 +29,7 @@ import { KeyWordsComponent } from './latex-to-pdf/edit-pdf/key-words/key-words.c
 import { PdfZoomComponent } from './latex-to-pdf/edit-pdf/pdf-zoom/pdf-zoom.component';
 import { StylePanelComponent } from './latex-to-pdf/edit-pdf/style-panel/style-panel.component';
 import { WorkingPanelComponent } from './latex-to-pdf/edit-pdf/working-panel/working-panel.component';
+import { NgxEditorModule } from 'ngx-editor';
 
 
 
@@ -44,6 +45,7 @@ import { WorkingPanelComponent } from './latex-to-pdf/edit-pdf/working-panel/wor
     WorkingPanelComponent
   ],
   imports: [
+    NgxEditorModule,
     FontAwesomeModule,
     AngularResizedEventModule,
     MatSliderModule,

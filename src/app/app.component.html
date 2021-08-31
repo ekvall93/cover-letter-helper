@@ -1,32 +1,15 @@
-<!-- <div class="container background" style="height:100%; overflow: scroll;">
-    <nav class="navbar">
-        <div style="margin: auto" class="navbar-brand">
-            <div style="width:70px;margin-top:5px;margin-bottom:5px">
-              <img class="images" src="./../assets/images/terran_2.svg">
-            </div>
+<div fxFill fxLayout="column">
+    <div fxFlex="15" class="roundCorner">
+        <div fxFill fxLayout="row" fxLayoutAlign="center center">
+            <a routerLink='/' routerLinkActive="active">
+                <img style="padding:10px" class="images" src="./../assets/images/terran_2.svg">
+            </a>
         </div>
-    </nav>
-    <div (resized)="onResized($event)" style="padding:10px;padding-bottom:80px;flex: 1;">
+    </div>
+    <div fxFlex="78" class="roundCorner">
         <router-outlet></router-outlet>
     </div>
-    <div id="footerContent" style=" position:fixed; bottom:0; width:100%;min-width: 100%;">
+    <div fxFlex="7" id="footerContent2">
         <span>Copyright © terran.ai 2021 | All rights reserved</span>
     </div>
-</div> -->
-
-        
-    <div fxFill fxLayout="column">
-        <div fxFlex="15" class="roundCorner">
-            <div fxFill fxLayout="row" fxLayoutAlign="center center">
-            
-                <img style="padding:10px" class="images" src="./../assets/images/terran_2.svg">
-            </div>
-        </div>
-        <div fxFlex="78" class="roundCorner">
-            <router-outlet></router-outlet>
-        </div>
-        <div fxFlex="7" id="footerContent2">
-            <span>Copyright © terran.ai 2021 | All rights reserved</span>
-        </div>
-
-    </div>
+</div>

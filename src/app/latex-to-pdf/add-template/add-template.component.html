@@ -1,13 +1,24 @@
-<div class="container" id="main" style="height:100%;min-height:100%">
+
+<div class="container" id="main" style="height:100%;min-height:100%;overflow: scroll !important">
   <div>
     <div id="header">
       <h1> Copy-paste your config template here</h1>
     </div>
     <br>
     <div class="roundCorners">
-      <ngx-text-editor  [height]="textAreaHeight" minHeight="50px" [placeholder]="'Enter text here...'" [spellcheck]="true" [(ngModel)]="coverLetterContent"></ngx-text-editor>
+      <!-- <ngx-text-editor  [height]="textAreaHeight" minHeight="50px" [placeholder]="'Enter text here...'" [spellcheck]="true" [(ngModel)]="coverLetterContent"></ngx-text-editor> -->
+      <div class="NgxEditor__Wrapper">
+        <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"> </ngx-editor-menu>
+        <ngx-editor
+          [editor]="editor"
+          [(ngModel)]="coverLetterContent"
+          [disabled]="false"
+          [placeholder]="'Type here...'"
+        ></ngx-editor>
+      </div>
     </div>
     <br>
     <button mat-raised-button color="terran" (click)="initPDF()">Create PDF</button>
+    
   </div>
 </div>

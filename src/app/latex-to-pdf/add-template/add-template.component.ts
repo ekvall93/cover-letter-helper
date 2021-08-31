@@ -5,6 +5,10 @@ import { FlaskService } from '../services/flask.service';
 import { UrlHandlerService } from '../services/url-handler.service';
 import { WordProcessorService } from '../services/word-processor.service';
 import {exampleText} from './example'
+import { Editor, Toolbar } from 'ngx-editor';
+import { faHighlighter } from '@fortawesome/free-solid-svg-icons';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-add-template',
@@ -21,11 +25,29 @@ export class AddTemplateComponent implements OnInit {
   keyWords: { [key: string]: keyWord } = {};
   sortedKeywords;
   textAreaHeight;
+  editor: Editor;
+
+  faHighlighter=faHighlighter;
+
+  toolbar: Toolbar = [
+    ["bold"]
+  ];
+
   constructor(private flask: FlaskService,
               private urlHandler: UrlHandlerService,
-              public wordProcessor : WordProcessorService ) { }
-
+              public wordProcessor : WordProcessorService,
+              private router : Router) { }
+  
+  ngAfterViewInit()  {
+    var node = document.querySelector('[title="Bold"]') as HTMLElement;
+    node.innerHTML = "Mark keyword"
+  }
   ngOnInit(): void {
+
+    
+
+    this.editor = new Editor();
+
     /* const container = document.querySelector('.container') */
     var clientHeight = document.getElementById('main').clientHeight;
 
@@ -40,14 +62,22 @@ export class AddTemplateComponent implements OnInit {
     return n_keywordSelector%2 != 0;
   }
 
+  getTemplateText() : string {
+    /* Preprocess ng-text-editor text */
+    let text : string = this.coverLetterContent.replaceAll("<strong>", "?@").replaceAll("</strong>", "?@")
+    text = text.replaceAll("<p>", "").replaceAll("</p>", "\n")
+    return text
+  }
+
   initPDF() : void {
+    const text : string = this.getTemplateText()
     /* Send the users template to render the initial PDF */
     if (this.verifyKeywordSelector()) {
       alert("The number of keyword selectors i.e., '?@', dont match!")
       return;
     }
 
-    this.flask.addTemplate(this.coverLetterContent, defaultStyle).subscribe((x:pdfTemplateOutput) => {
+    this.flask.addTemplate(text, defaultStyle).subscribe((x:pdfTemplateOutput) => {
       if (!x.success) {
         alert("Your template contains symbols not compatible yet.")
         return;
@@ -55,7 +85,8 @@ export class AddTemplateComponent implements OnInit {
       this.Urls = this.urlHandler.initiateUrls(x);
       this.keyWords = this.getKeywords(x.keyWords);
       this.sortedKeywords = this.sortKeywords(this.keyWords)
-      this.sendItems();
+      /* this.sendItems(); */
+      this.router.navigate(["/edit-pdf"], { queryParams: {Urls: JSON.stringify(this.Urls), keyWords: JSON.stringify(this.keyWords), sortedKeywords: JSON.stringify(this.sortedKeywords)}});
     });
   }
 
@@ -83,6 +114,10 @@ export class AddTemplateComponent implements OnInit {
       return first[1]["number"] - second[1]["number"];
     });
     return items
+  }
+
+  ngOnDestroy(): void {
+    this.editor.destroy();
   }
 
   

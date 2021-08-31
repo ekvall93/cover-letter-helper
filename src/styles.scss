@@ -22,11 +22,3 @@ html, body {
 
 @import '~bootstrap/scss/bootstrap';
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-
-.mat-slider.mat-checked:not(.mat-disabled) .mat-slider-thumb {
-  background-color: blue; /*replace with your color*/
-}
-
-.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slider-toggle-bar {
-  background-color: skyblue;  /*replace with your color*/
-}

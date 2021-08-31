@@ -34,6 +34,7 @@
     "bootstrap": "^4.5.0",
     "file-system": "^2.2.2",
     "ng2-pdf-viewer": "^7.0.1",
+    "ngx-editor": "^10.1.0",
     "ngx-extended-pdf-viewer": "^10.0.0-alpha.8",
     "ngx-text-editor": "^3.3.0",
     "rimraf": "^3.0.2",

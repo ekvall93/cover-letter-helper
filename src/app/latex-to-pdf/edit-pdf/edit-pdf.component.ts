@@ -1,4 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { debounceTimeValue, fonts, defaultStyle, fontSize } from '../constants';
@@ -14,16 +15,21 @@ import { WordProcessorService } from '../services/word-processor.service';
 })
 export class EditPDFComponent implements OnInit {
   @ViewChild('pdfDiv') public pdfDiv: ElementRef;
-  @Input() Urls : URLS;
+  /* @Input() Urls : URLS;
   @Input() keyWords : { [key: string]: keyWord };
-  @Input() sortedKeywords : []
+  @Input() sortedKeywords : [] */
 
   
   constructor(public wordProcessor : WordProcessorService,
               private flask: FlaskService,
-              private urlHandler: UrlHandlerService) { }
+              private urlHandler: UrlHandlerService,
+              private route: ActivatedRoute) { }
   
-  
+  Urls:URLS;
+  keyWords;
+  sortedKeywords;
+
+
   style = defaultStyle;
   hmargin;
   vmargin;
@@ -40,6 +46,16 @@ export class EditPDFComponent implements OnInit {
   keyWordOptions : KeyWordOptions = {useHighlight : true, useIndexing : true, changeStyle: false}
 
   ngOnInit(): void {
+
+    this.route
+      .queryParams
+      .subscribe(params => {
+        console.log(params["Urls"])
+        console.log(params["keyWords"])
+        this.Urls = JSON.parse(params["Urls"])
+        this.keyWords = JSON.parse(params["keyWords"])
+        this.sortedKeywords = JSON.parse(params["sortedKeywords"])
+      });
 
     /* Set Debouncer on the update on PDF to avoid spam */
     this.observableTemplate$ = this.templateUpdater.pipe(debounceTime(debounceTimeValue),

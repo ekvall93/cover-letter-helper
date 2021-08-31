@@ -28,7 +28,8 @@ button {
   display:block;
 }
 
-::ng-deep .ngx-text-editor-textarea {
+
+/* ::ng-deep .ngx-text-editor-textarea {
   border:none !important;
 }
 
@@ -50,3 +51,25 @@ button {
 
 }
 
+ */
+
+ ::ng-deep .NgxEditor__MenuItem--IconContainer {
+   width:120px !important;
+   color: white;
+   font-family: Poppins, sans-serif !important;
+   
+ }
+
+ ::ng-deep .NgxEditor__MenuItem {
+  width:120px !important;
+  margin:auto !important;
+  background-color: #2c4878;
+  border-radius: 25px;
+}
+
+::ng-deep .NgxEditor__MenuItem--Icon {
+  width:120px !important;
+  margin:auto !important;
+  background-color: #2c4878;
+  border-radius: 25px;
+}
