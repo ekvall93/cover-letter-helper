@@ -4,9 +4,22 @@
 }
 
 
+
+.mat-raised-button.mat-off, .mat-flat-button.mat-off, .mat-icon-button.mat-off{
+  background-color: rgba(255, 255, 255,0.8);
+  color: white;
+  border: 2px solid rgba(44, 72, 120, 0.8) !important;
+  
+}
+
 #header {
   width: 100%; 
   text-align: center;
+}
+
+.roundCorner2 {
+  border-radius: 25px !important;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24) !important;
 }
 
 .roundCorners {

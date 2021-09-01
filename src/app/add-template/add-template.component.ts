@@ -1,10 +1,10 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { defaultStyle, keywordSelector } from './../constants';
 import { pdfTemplateOutput, URLS, keyWord } from './../latex2pdfInterface';
 import { FlaskService } from '../services/flask.service';
 import { UrlHandlerService } from '../services/url-handler.service';
 import { WordProcessorService } from '../services/word-processor.service';
-import {exampleText, exampleTextPreProcessed} from './example'
+import {exampleText, exampleTextPreProcessed, exampleApplicationText, exampleApplicationTextPreProcessed} from './example'
 import { Editor, Toolbar } from 'ngx-editor';
 import { faHighlighter } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
@@ -19,17 +19,23 @@ import { UrlKeeperService } from '../services/url-keeper.service';
 
 export class AddTemplateComponent implements OnInit {
   exampleTextPreProcessed :string  = exampleTextPreProcessed;
+  exampleApplicationTextPreProcessed : string = exampleApplicationTextPreProcessed;
   coverLetterContent: string;
+  applicationContent: string;
   Urls = <URLS>{};
   keyWords: { [key: string]: keyWord } = {};
   sortedKeywords;
   textAreaHeight;
   editor: Editor;
-
   faHighlighter=faHighlighter;
+  showCoverletter : boolean = true
 
-  toolbar: Toolbar = [
+  toolbarCoverletter: Toolbar = [
     ["bold"]
+  ];
+
+  toolbarApplication: Toolbar = [
+    []
   ];
 
   constructor(private flask: FlaskService,
@@ -38,12 +44,20 @@ export class AddTemplateComponent implements OnInit {
               private router : Router, private urlKepeer: UrlKeeperService) { }
   
   ngAfterViewInit()  {
-    var node = document.querySelector('[title="Bold"]') as HTMLElement;
+    this.setNgxEditorButtonText()
+  }
+
+  setNgxEditorButtonText() {
+    setTimeout(() => {
+      var node = document.querySelector('[title="Bold"]') as HTMLElement;
     node.innerHTML = "Mark keyword"
+    }, 20)
+    
   }
   ngOnInit(): void {
 
     this.setTemplate();
+    this.setAppliction();
 
     this.editor = new Editor();
 
@@ -63,6 +77,15 @@ export class AddTemplateComponent implements OnInit {
     }
   }
 
+  setAppliction() : void {
+    var applicationText = localStorage.getItem('userApplication');
+    if (applicationText) {
+      this.applicationContent = applicationText;
+    } else {
+      this.applicationContent = exampleApplicationText;
+    }
+  }
+
   verifyKeywordSelector() : boolean {
     /* Verify so there are even number of keyword selector */
     let n_keywordSelector : number = this.coverLetterContent.split(keywordSelector).length -1;
@@ -76,6 +99,11 @@ export class AddTemplateComponent implements OnInit {
     return text
   }
 
+  getApplicationText() : string {
+    let text : string = this.applicationContent.replaceAll("<p>", "").replaceAll("</p>", "\n")
+    return text
+  }
+
   saveUserTemplate(t : string) : void {
     /* Save the users template */
     if (this.exampleTextPreProcessed.trim() != t.trim()) {
@@ -83,17 +111,28 @@ export class AddTemplateComponent implements OnInit {
     }
   }
 
+  saveUserApplication(t : string) : void {
+    /* Save the users template */
+    if (this.exampleApplicationTextPreProcessed.trim() != t.trim()) {
+      console.log("WORKED")
+      localStorage.setItem('userApplication', this.applicationContent)
+    }
+  }
+
   initPDF() : void {
     /* console.log(this.exampleText == this.coverLetterContent) */
-    const text : string = this.getTemplateText()
-    this.saveUserTemplate(text);
+    const coverLetterText : string = this.getTemplateText();
+    const applictionText : string = this.getApplicationText();
+    
+    this.saveUserTemplate(coverLetterText);
+    this.saveUserApplication(applictionText);
     /* Send the users template to render the initial PDF */
     if (this.verifyKeywordSelector()) {
       alert("The number of keyword selectors i.e., '?@', dont match!")
       return;
     }
 
-    this.flask.addTemplate(text, defaultStyle).subscribe((x:pdfTemplateOutput) => {
+    this.flask.addTemplate(coverLetterText, defaultStyle, applictionText).subscribe((x:pdfTemplateOutput) => {
       if (!x.success) {
         alert("Your template contains symbols not compatible yet.")
         return;
