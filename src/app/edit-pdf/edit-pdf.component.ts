@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { debounceTimeValue, fonts, defaultStyle, fontSize } from './../constants';
 import { keyWord, KeyWordOptions, pdfTemplateOutput, URLS } from './../latex2pdfInterface';
+import { defaultKeyword, defaultKeywordKey } from './../constants'
 import { FlaskService } from '../services/flask.service';
 import { UrlHandlerService } from '../services/url-handler.service';
 import { WordProcessorService } from './../services/word-processor.service';
@@ -25,15 +26,13 @@ export class EditPDFComponent implements OnInit {
   keyWords;
   sortedKeywords;
 
-
   style = defaultStyle;
   hmargin;
   vmargin;
   font;
   fonts = fonts;
-  keywordSelected = false;
-  keyWord: string = "";
-  key: string;
+  keyWord: string = defaultKeyword;
+  key: string = defaultKeywordKey;
   PDFscroll: number = 0;
   defaultPDFZoom: number = 1;
   pdfZoom: number = this.defaultPDFZoom;
@@ -47,8 +46,14 @@ export class EditPDFComponent implements OnInit {
       .subscribe(params => {
         this.Urls = JSON.parse(params["Urls"])
         this.keyWords = JSON.parse(params["keyWords"])
+
+        /* Select a word that is selected */
+        this.keyWords[this.key].isSelected = true;
+
+        
         this.sortedKeywords = JSON.parse(params["sortedKeywords"])
         let oldKeyWords = this.getKeyWords();
+
         if (oldKeyWords) {
           for (let key in oldKeyWords) {
             let value = oldKeyWords[key];
@@ -57,21 +62,19 @@ export class EditPDFComponent implements OnInit {
             }
             // Use `key` and `value`
         }
-
         let tmp = [];
         for (let x of this.sortedKeywords) {
           if(x[0] in oldKeyWords) {
             let y = x[1]
             y.word = oldKeyWords[x[0]].word
             tmp.push([x[0], y])
-
+          } else {
+            tmp.push(x)
           }
         }
         this.sortedKeywords = tmp;
         }
-
         setTimeout(()=> {this.updatePDF()},20)
-        
       });
 
     /* Set Debouncer on the update on PDF to avoid spam */
@@ -107,7 +110,7 @@ export class EditPDFComponent implements OnInit {
   selectKeyword(key : string) : void {
     
     /* Select the keyword that the used want to modify */
-    this.keywordSelected = true;
+    
     this.keyWord  = this.keyWords[key].word;
     if (this.key) {
       this.keyWords[this.key].isSelected = false

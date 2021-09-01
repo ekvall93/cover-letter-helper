@@ -13,7 +13,7 @@
             <form class="example-form">
             <mat-form-field class="example-full-width roundCorner" appearance="fill" id="form">
                 <mat-label style="color: white;">Change keyword</mat-label>
-                <input matInput [disabled]="!keywordSelected" [(ngModel)]="keyWord" (input)="sendKeyword()" style="color: white;" placeholder="Select keyword">
+                <input matInput [(ngModel)]="keyWord" (input)="sendKeyword()" style="color: white;" placeholder="Select keyword">
             </mat-form-field>
             </form>
         </div>

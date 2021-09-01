@@ -11,7 +11,6 @@ const FileSaver = require('file-saver');
   styleUrls: ['./working-panel.component.scss']
 })
 export class WorkingPanelComponent implements OnInit {
-  @Input() keywordSelected : boolean;
   @Input() keyWord: string
   @Input() Urls: URLS;
   @Output() keyWordOptionsEvent = new EventEmitter<KeyWordOptions>();

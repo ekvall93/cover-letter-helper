@@ -60,3 +60,6 @@ export const  fonts : Fonts[] = [
 
 export const pdfFile : string =  "cover.pdf";
 export const downloadPdfFile : string =  "cover_letter";
+
+export const defaultKeyword : string = "company";
+export const defaultKeywordKey : string = keywordSelector + defaultKeyword + keywordSelector;
