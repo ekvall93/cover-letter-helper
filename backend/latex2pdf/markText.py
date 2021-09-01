@@ -102,13 +102,16 @@ class MarkKeywords:
         self.endTag = endTag
         self.tagLength = len(self.startTag) + len(self.endTag)
 
+    def _escapeSpecialChars(self, t:str)->str:
+        """Escape special chars for regex"""
+        return re.escape(t)
+
     def _getWordPositions(self, word : str, text : str)->List[int]:
         """Find position of word in text"""
-        return [m.start() for m in re.finditer(f' {word} ', text)]
-
+        return [m.start() for m in re.finditer(f' {self._escapeSpecialChars(word)} ', text)]
     def _getStartTagIx(self, text: str)->int:
         """Find position of the last startTag in text before keyword"""
-        start_tag_match = re.search(f"(?s:.*){self.startTag}", text)
+        start_tag_match = re.search(fr"(?s:.*){self.startTag}", text)
         if start_tag_match:
             start_tag_ix = start_tag_match.span()[1]
         else:
@@ -118,7 +121,7 @@ class MarkKeywords:
 
     def _getEndTagIx(self, text: str)->int:
         """Find position of the last endTag in text before keyword"""
-        end_tag_match = re.search(f"(?s:.*){self.endTag}", text)
+        end_tag_match = re.search(fr"(?s:.*){self.endTag}", text)
         if end_tag_match:
             end_tag_ix = end_tag_match.span()[1]
         else:

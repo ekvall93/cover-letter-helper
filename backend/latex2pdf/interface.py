@@ -45,23 +45,24 @@ class PathHandler:
     for k,v in paths.items():
       setattr(self, k, v)
 
-class TexTemplate:
-  @staticmethod
-  def getTexFile(styles : Styles):
-    _texCommand = r'''
+
+
+_texCommand = r'''
               \makeatletter
               \renewcommand{\overset}[2]{\ensuremath{\mathop{\kern\z@\mbox{#2}}\limits^{\mbox{\scriptsize #1}}}}
               \renewcommand{\underset}[2]{\ensuremath{\mathop{\kern\z@\mbox{#2}}\limits_{\mbox{\scriptsize #1}}}}
               \makeatother
               '''
 
-    _hlc_command = r'''
-                    \newcommand{\hlc}[2][yellow]{{%
-                    \colorlet{foo}{#1}%
-                    \sethlcolor{foo}\hl{#2}}%
-                    }
-                    '''
-
+_hlc_command = r'''
+                \newcommand{\hlc}[2][yellow]{{%
+                \colorlet{foo}{#1}%
+                \sethlcolor{foo}\hl{#2}}%
+                }
+                '''
+class TexTemplate:
+  @staticmethod
+  def getTemplateTexFile(styles : Styles):
     return  fr'''
             \documentclass[{styles.fontSize}pt]{{article}}
             \usepackage[utf8]{{inputenc}}
@@ -94,6 +95,34 @@ class TexTemplate:
             \noindent
             ?@author?@
 
+
+            \end{{document}}
+          '''
+  @staticmethod
+  def getApplicationTexFile(styles : Styles):
+    return  fr'''
+            \documentclass[{styles.fontSize}pt]{{article}}
+            \usepackage[utf8]{{inputenc}}
+            \usepackage{{geometry}}
+            \usepackage[swedish,english]{{babel}}
+            \usepackage{{xcolor}}
+            \usepackage{{soul}}
+            \usepackage{{textcomp}}
+            {_hlc_command}
+            \usepackage{{eurosym}}
+            \usepackage{{lettrine}}
+            \usepackage{{amsmath}}
+            \usepackage[T1]{{fontenc}}
+            \usepackage{{{styles.font}}}
+            \renewcommand{{\familydefault}}{{\sfdefault}}
+            {_texCommand}
+            \newgeometry{{vmargin={{{styles.vmargin}mm}}, hmargin={{{styles.hmargin}mm,{styles.hmargin}mm}}}}
+            \title{{Application text}}
+            \begin{{document}}
+            \pagenumbering{{gobble}}
+            \maketitle
+
+            {keywordSelector}TEXT{keywordSelector}
 
             \end{{document}}
           '''

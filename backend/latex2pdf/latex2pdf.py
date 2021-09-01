@@ -16,11 +16,8 @@ import pathlib
 import random
 from .interface import KeyWordOptions, Styles, KeyWord, KeyWords, PathHandler, TexTemplate
 import copy
-
-#TODO: remove these imports
 from .markText import MarkText
-from .constants import text
-
+from .constants import startTag, endTag
 def getWkhtmltopdfPath():
   x = os.popen("which wkhtmltopdf")
   s = x.read()
@@ -103,9 +100,14 @@ class TextHandler:
     template = "\\noindent \n " + template
     return template
 
-  def addMainText(self, template: str, styles : Styles)->str:
+  def addMainTextTemplate(self, template: str, styles : Styles)->str:
     """Prepare the latex text by adding the used template text"""
-    template = TexTemplate.getTexFile(styles).replace(f"{keywordSelector}TEXT{keywordSelector}", template)
+    template = TexTemplate.getTemplateTexFile(styles).replace(f"{keywordSelector}TEXT{keywordSelector}", template)
+    return template
+
+  def addMainTextApplication(self, template: str, styles : Styles)->str:
+    """Prepare the latex text by adding the used template text"""
+    template = TexTemplate.getApplicationTexFile(styles).replace(f"{keywordSelector}TEXT{keywordSelector}", template)
     return template
 
   def getKeyWords(self, template: str)->KeyWords:
@@ -142,7 +144,7 @@ class Latex2PDFConverter:
           print(e)
           pass
 
-  def convertLatex(self, dirpath: pathlib.Path, texFile: pathlib.Path)->None:
+  def convertLatex(self, dirpath: pathlib.Path, texFile: pathlib.Path, pdfFile: str)->None:
     """Convert the Latex file to PDF"""
     cmd = ['pdflatex', '-interaction', 'nonstopmode', "-output-directory", dirpath, texFile]
     proc = subprocess.Popen(cmd)
@@ -241,23 +243,39 @@ class Latex2PDF(TextHandler, FileHandler):
     pathsDict = self.createProjectPaths(Paths)
     return pathsDict
 
-  def createPDFFromLatex(self, Paths: PathHandler, template: str)->None:
+  def createTemplatePDFFromLatex(self, Paths: PathHandler, template: str)->None:
     """Write latex file, and the convert it into PDF"""
     self.writeFile(Paths.PDFDir, self._texFileName, template)
-    self.convertLatex(Paths.PDFDir, Paths.texFile)
+    self.convertLatex(Paths.PDFDir, Paths.texFile, pdfFileName)
 
-  def initProject(self, templateText: str, styles: Styles)->Dict[str, Union[pathlib.Path, List[str]]]:
+  def createApplicationPDFFromLatex(self, Paths: PathHandler, application: str)->None:
+    """Write latex file, and the convert it into PDF"""
+    self.writeFile(Paths.projectDir, "applicationn.tex", application)
+    self.convertLatex(Paths.projectDir, Paths.projectDir + "applicationn.tex", "applicationn.pdf")
+
+  def initProject(self, templateText: str, applicationText : str, styles: Styles)->Dict[str, Union[pathlib.Path, List[str]]]:
     """Initiate project for user"""
     try:
       Path = self.initProjectPaths()
       templateText = self.preProcessTemplate(templateText)
       self.writeFile(Path.projectDir, "templateText.txt", templateText)
-      template = self.addMainText(templateText, styles)
+      template = self.addMainTextTemplate(templateText, styles)
       self.writeFile(Path.projectDir, "template.txt", template)
       keyWords = self.getKeyWords(template)
       keyWordOptions = KeyWordOptions({"useIndexing": True, "useHighlight" : True})
       template = self.modifyKeyword(template, keyWords, keyWordOptions, True)
-      self.createPDFFromLatex(Path, template)
+      self.createTemplatePDFFromLatex(Path, template)
+
+
+      applicationText = MarkText().markText(applicationText)
+      applicationText = self.preProcessTemplate(applicationText)
+      applicationText = applicationText.replace(startTag, "\hl{").replace(endTag, "}")
+      #print(applicationText)
+
+      applicationTex = self.addMainTextTemplate(applicationText, styles)
+
+      Path = self.createApplicationPDFFromLatex(Path, applicationTex)
+
       return {"success" : True, "PDFDir" : Path.PDFDir, "projectDir": Path.projectDir, "keyWords": keyWords.data_dict}
     except Exception as e:
       print(e)
@@ -280,7 +298,7 @@ class Latex2PDF(TextHandler, FileHandler):
     #Create a new dir for the PDF so we can re-render the new PDF (flask wont update otherwise....)
     Paths = self.createProjectPaths(Paths)
     try:
-      self.createPDFFromLatex(Paths, template)
+      self.createTemplatePDFFromLatex(Paths, template)
       #Succeeded compiling latex, delete old project
       self.deleteFolder(PDFDir)
       return {"success" : True, "PDFDir" : Paths.PDFDir}
@@ -304,8 +322,10 @@ class Latex2PDFHandler(Resource, Latex2PDF):
     queryData = request.get_json(force=True)
     initProject = queryData['initProject']
     if initProject:
-      initProject, styles = queryData['template'], Styles(queryData['style'])
-      return self.initProject(initProject, styles)
+      initProject, styles, application = queryData['template'], Styles(queryData['style']), queryData['application']
+      """ print(MarkText().markText(application)) """
+      #print(application)
+      return self.initProject(initProject, application, styles)
     else:
       styles, keyWordOptions, keyWords, Paths = Styles(queryData["style"]), KeyWordOptions(queryData["keyWordOptions"]), KeyWords(queryData['keyWords']), PathHandler(queryData['URLS'])
       if styles.update:
