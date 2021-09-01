@@ -1,6 +1,7 @@
 import {Fonts, FontSize, Style} from "./latex2pdfInterface"
 export const debounceTimeValue : number = 300;
 export const readPFDapi : string = "readPDF";
+export const applicationPDFapi : string = "readApplicationPDF";
 export const deletePDFapi : string = "deletePDF";
 
 

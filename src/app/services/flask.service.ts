@@ -11,8 +11,8 @@ export class FlaskService {
 
   constructor(private httpClient: HttpClient) { }
 
-  addTemplate(template: string, style : Style, appliction: string): any {
-    return this.httpClient.put<string[]>(this.url + 'Latex2PDFHandler/', JSON.stringify({ initProject:true, template, style, appliction }));
+  addTemplate(template: string, style : Style, application: string): any {
+    return this.httpClient.put<string[]>(this.url + 'Latex2PDFHandler/', JSON.stringify({ initProject:true, template, style, application }));
   }
 
   updateTemplate(style: Style, keyWordOptions: KeyWordOptions, keyWords : { [key: string]: keyWord }, URLS: URLS): any {

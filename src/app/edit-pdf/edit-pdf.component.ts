@@ -45,6 +45,7 @@ export class EditPDFComponent implements OnInit {
       .queryParams
       .subscribe(params => {
         this.Urls = JSON.parse(params["Urls"])
+        console.log(this.Urls)
         this.keyWords = JSON.parse(params["keyWords"])
 
         /* Select a word that is selected */

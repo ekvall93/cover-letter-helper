@@ -15,10 +15,18 @@
           </div>
           <app-working-panel style="width:100%" [keyWord]="keyWord" [keywordSelected]="keywordSelected" [Urls]="Urls" (keyWordOptionsEvent)="updateSettings($event)" (styleOptionsEvent)="updateStyles($event)" (keywordEvent)=updateKeyword($event)></app-working-panel>          
       </div>
-      <pdf-viewer 
+      <!-- <pdf-viewer 
         style="border-radius: 25px !important;"
         #pdfDiv id="pdfDiv" 
         [src]="this.Urls.currentProjectPath"
+        [original-size]="false"
+        [zoom]="pdfZoom"
+        (pages-initialized)="setPDFscroll();setPDFleftScroll()">
+      </pdf-viewer> -->
+      <pdf-viewer 
+        style="border-radius: 25px !important;"
+        #pdfDiv id="pdfDiv" 
+        [src]="this.Urls.applicationPDFPath"
         [original-size]="false"
         [zoom]="pdfZoom"
         (pages-initialized)="setPDFscroll();setPDFleftScroll()">
