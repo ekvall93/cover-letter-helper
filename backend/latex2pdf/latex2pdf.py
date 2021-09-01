@@ -151,7 +151,7 @@ class Latex2PDFConverter:
     proc.communicate()
     retcode = proc.returncode
     if not retcode == 0:
-        os.unlink(dirpath + pdfFileName)
+        os.unlink(dirpath + pdfFile)
         raise ValueError('Error {} executing command: {}'.format(retcode, ' '.join(cmd)))
 
 class FileHandler(Latex2PDFConverter):
@@ -250,8 +250,8 @@ class Latex2PDF(TextHandler, FileHandler):
 
   def createApplicationPDFFromLatex(self, Paths: PathHandler, application: str)->None:
     """Write latex file, and the convert it into PDF"""
-    self.writeFile(Paths.projectDir, "applicationn.tex", application)
-    self.convertLatex(Paths.projectDir, Paths.projectDir + "applicationn.tex", "applicationn.pdf")
+    self.writeFile(Paths.projectDir, "application.tex", application)
+    self.convertLatex(Paths.projectDir, Paths.projectDir + "application.tex", "application.pdf")
 
   def initProject(self, templateText: str, applicationText : str, styles: Styles)->Dict[str, Union[pathlib.Path, List[str]]]:
     """Initiate project for user"""
@@ -270,11 +270,9 @@ class Latex2PDF(TextHandler, FileHandler):
       applicationText = MarkText().markText(applicationText)
       applicationText = self.preProcessTemplate(applicationText)
       applicationText = applicationText.replace(startTag, "\hl{").replace(endTag, "}")
-      #print(applicationText)
+      applicationTex = self.addMainTextApplication(applicationText, styles)
 
-      applicationTex = self.addMainTextTemplate(applicationText, styles)
-
-      Path = self.createApplicationPDFFromLatex(Path, applicationTex)
+      self.createApplicationPDFFromLatex(Path, applicationTex)
 
       return {"success" : True, "PDFDir" : Path.PDFDir, "projectDir": Path.projectDir, "keyWords": keyWords.data_dict}
     except Exception as e:

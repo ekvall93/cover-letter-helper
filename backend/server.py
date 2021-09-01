@@ -26,6 +26,14 @@ def readPDF(path)->IO[bytes]:
   pdf = open(pdfPath, 'rb')
   return send_file(pdf, mimetype='application/pdf')
 
+@app.route('/api/readApplicationPDF/<path:path>')
+def readApplicationPDF(path)->IO[bytes]:
+  """Send PDF file to user"""
+  path = fileHandler.validateFolderPath(path)
+  pdfPath = path + "application.pdf"
+  pdf = open(pdfPath, 'rb')
+  return send_file(pdf, mimetype='application/pdf')
+
 @app.route('/api/deletePDF/', methods=['GET', 'POST', 'PUT'])
 def deletePDF()->str:
   """Delete project"""
@@ -37,7 +45,7 @@ def deletePDF()->str:
 def run_twisted_wsgi():
     resource = WSGIResource(reactor, reactor.getThreadPool(), app)
     site = Site(resource)
-    reactor.listenTCP(site, debug=True, interface='0.0.0.0', host='0.0.0.0')
+    reactor.listenTCP(site, port=5000, debug=True, interface='0.0.0.0', host='0.0.0.0')
     reactor.run(**reactor_args)
 
 if __name__ == "__main__":

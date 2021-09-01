@@ -120,7 +120,7 @@ class TexTemplate:
             \title{{Application text}}
             \begin{{document}}
             \pagenumbering{{gobble}}
-            \maketitle
+
 
             {keywordSelector}TEXT{keywordSelector}
 
