@@ -34,6 +34,9 @@ RUN tlmgr install --no-persistent-downloads xcolor
 #RUN tlmgr -sys install --no-persistent-downloads collection-fontsrecommended
 RUN apt-get update && apt-get install -y texlive-fonts-extra
 RUN apt-get update && apt-get install texlive-lang-european
+
+RUN pip3 install -U pip setuptools wheel && pip3 install --upgrade cython && pip3 install -U spacy && python3 -m spacy download en_core_web_sm
+
 COPY . /app
 
 CMD ["flask", "run", "--host=0.0.0.0"]

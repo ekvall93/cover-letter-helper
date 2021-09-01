@@ -17,6 +17,10 @@ import random
 from .interface import KeyWordOptions, Styles, KeyWord, KeyWords, PathHandler, TexTemplate
 import copy
 
+#TODO: remove these imports
+from .markText import MarkText
+from .constants import text
+
 def getWkhtmltopdfPath():
   x = os.popen("which wkhtmltopdf")
   s = x.read()

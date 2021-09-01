@@ -54,3 +54,8 @@ specialCharsDict = {"\\" : r"\textbackslash ",
 
 pdfFileName = 'cover.pdf'
 texFileName = 'cover.tex'
+
+
+tagName = "strong"
+startTag = f"<{tagName}>"
+endTag = f"</{tagName}>"
