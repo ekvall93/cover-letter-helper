@@ -1,12 +1,14 @@
 <div id="workingPanelContainer">
     <div fxLayout="row" fxLayoutAlign="center center" style="margin-top: 10px">
-
-        <div class="floatLeftContainer">
-            <button style="margin-bottom:12px;" class="buttonSize" style="margin-right:5px" mat-icon-button (click)='keyWordOptions.useHighlight=!keyWordOptions.useHighlight;sendUpdatePDF()' [color]="keyWordOptions.useHighlight ? 'terran' : 'off'">
+        <div *ngIf="editTemplate" class="floatLeftContainer">
+            <button class="buttonSize" style="margin-right:5px" mat-icon-button (click)='keyWordOptions.useHighlight=!keyWordOptions.useHighlight;sendUpdatePDF()' [color]="keyWordOptions.useHighlight ? 'terran' : 'off'">
                 <fa-icon [ngStyle]="{'color' : keyWordOptions.useHighlight  ? 'rgba(255, 255, 255,0.8)' : 'rgba(44, 72, 120, 0.8)'}" class="iconContainer" size="2x" [icon]="faHighlighter"></fa-icon>
             </button>
-            <button class="buttonSize" mat-icon-button (click)="keyWordOptions.useIndexing=!keyWordOptions.useIndexing;sendUpdatePDF()" [color]="keyWordOptions.useIndexing ? 'terran' : 'off'">
+            <button class="buttonSize" style="margin-right:5px" mat-icon-button (click)="keyWordOptions.useIndexing=!keyWordOptions.useIndexing;sendUpdatePDF()" [color]="keyWordOptions.useIndexing ? 'terran' : 'off'">
                 <fa-icon [ngStyle]="{'color' : keyWordOptions.useIndexing  ? 'rgba(255, 255, 255,0.8)' : 'rgba(44, 72, 120, 0.8)'}" class="iconContainer" size="2x" [icon]="faListOl"></fa-icon>
+            </button>
+            <button class="buttonSize" mat-icon-button (click)="keyWordOptions.changeStyle=!keyWordOptions.changeStyle;sendChangeStyle()" [color]="!keyWordOptions.changeStyle ? 'terran' : 'off'">
+                <fa-icon [ngStyle]="{'color' : !keyWordOptions.changeStyle  ? 'rgba(255, 255, 255,0.8)' : 'rgba(44, 72, 120, 0.8)'}" class="iconContainer" size="2x" [icon]="faPalette"></fa-icon>
             </button>
         </div>
         <div class="floatLeftContainer" style="margin-top:5px">
@@ -18,10 +20,16 @@
             </form>
         </div>
         <div style="float: right;">
-            <button class="buttonSize" mat-icon-button (click)="keyWordOptions.changeStyle=!keyWordOptions.changeStyle;sendChangeStyle()" [color]="!keyWordOptions.changeStyle ? 'terran' : 'off'">
-                <fa-icon [ngStyle]="{'color' : !keyWordOptions.changeStyle  ? 'rgba(255, 255, 255,0.8)' : 'rgba(44, 72, 120, 0.8)'}" class="iconContainer" size="2x" [icon]="faPalette"></fa-icon>
+            <button style="margin-right:5px;float: left;" class="buttonSize" mat-icon-button (click)="editTemplate=!editTemplate;sendDocumentView()" [color]="!editTemplate ? 'terran' : 'off'" [disabled]="editTemplate">
+                <fa-icon id="editIcon" [ngStyle]="{'color' : !editTemplate  ? 'rgba(255, 255, 255,0.8)' : 'rgba(44, 72, 120, 0.8)'}"  size="2x" [icon]="faEdit"></fa-icon>
             </button>
-            <button style="margin-left:5px" class="buttonSize" mat-icon-button (click)="downloadPDF()" color="terran">
+            <button style="margin-right:5px;float: left" class="buttonSize" mat-icon-button (click)="editTemplate=!editTemplate;sendDocumentView()" [color]="editTemplate ? 'terran' : 'off'" [disabled]="!editTemplate">
+                <fa-icon [ngStyle]="{'color' : editTemplate  ? 'rgba(255, 255, 255,0.8)' : 'rgba(44, 72, 120, 0.8)'}" class="iconContainer" size="2x" [icon]="faInfoCircle"></fa-icon>
+            </button>
+            <button *ngIf="editTemplate" style="float: left;border: none" disabled="true">
+                <div stlye="float: right;" class="vl"></div>
+            </button>
+            <button *ngIf="editTemplate" style="margin-left:5px;float: left" class="buttonSize" mat-icon-button (click)="downloadPDF()" color="terran">
                 <fa-icon style="color:rgba(255, 255, 255,0.8)" class="iconContainer" style="margin-right: 2px;" size="2x" [icon]="faFileDownload"></fa-icon>
             </button>
         </div>

@@ -39,7 +39,7 @@ export class EditPDFComponent implements OnInit {
   templateUpdater = new Subject();
   observableTemplate$: Observable<any>;
   keyWordOptions : KeyWordOptions = {useHighlight : true, useIndexing : true, changeStyle: false}
-
+  editTemplate : boolean = true;
   ngOnInit(): void {
     this.route
       .queryParams
@@ -213,9 +213,11 @@ export class EditPDFComponent implements OnInit {
   
   zoomChange(e) {
     this.pdfZoom = e.value
-    setTimeout(()=> {this.setPDFleftScroll()},20)
-    
-    
+    setTimeout(()=> {this.setPDFleftScroll()},20)  
+  }
+
+  updateDocumentView(e) : void {
+    this.editTemplate = e;
   }
 
 

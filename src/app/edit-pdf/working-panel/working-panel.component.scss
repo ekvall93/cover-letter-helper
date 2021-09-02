@@ -1,3 +1,7 @@
+.vl {
+  border-left: 2px solid rgba(44, 72, 120, 0.8);
+  height: 60px;
+}
 #workingPanelContainer {
     width:100%;
     height:70;
@@ -32,6 +36,11 @@
     padding-top: 10px
 }
 
+#editIcon {
+  float: right; 
+  padding-top:11px; 
+  padding-right:11px;
+}
 .buttonSize {
     width:59.5px;
     height:59.5px
