@@ -88,6 +88,7 @@ class TexTemplate:
 
             {keywordSelector}TEXT{keywordSelector}
             \newline
+
             \noindent
             Yours sincerly,
 
