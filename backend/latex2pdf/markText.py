@@ -6,13 +6,33 @@ from rake_nltk import Rake
 from gensim.summarization import keywords as gensimKeywords
 from .constants import startTag, endTag
 import re
-
+import spacy_ke
 
 class AssertListStr:
     """Make sure that list contains strings"""
     def assertListStr(self, wordLisr)->List[str]:
         """Convert to strings"""
         return [str(w) for w in wordLisr]
+
+
+
+class SpacyKeKeywords(AssertListStr):
+    def __init__(self):
+        AssertListStr.__init__(self)
+        self.SpacyKeNLP = spacy.load("en_core_web_sm")
+        self.SpacyKeNLP.add_pipe("yake")
+    """Get text keywords with Spacy"""
+    def spacyKeKeywords(self, text: str, treshold = 0.5)->List[str]:
+        """Get keywords"""
+        doc = self.SpacyKeNLP(text)
+        words = list()
+        for keyword, score in doc._.extract_keywords(n=100):
+            if score > treshold:
+                break
+            words.append(keyword)
+        words = self.assertListStr(words)
+        words.sort(key=lambda x: len(x.split()), reverse=True)
+        return words
 
 class SpacyKeywords(AssertListStr):
     def __init__(self):
@@ -63,13 +83,14 @@ class GensimKeywords(AssertListStr):
         """Get keywords"""
         return self.assertListStr(gensimKeywords(text).split("\n"))
 
-class Keywords(SpacyKeywords, YakeKeywords, RakeKeywords, GensimKeywords):
+class Keywords(SpacyKeywords, YakeKeywords, RakeKeywords, GensimKeywords, SpacyKeKeywords):
     """Get text keywords from several nlp-packages"""
-    def __init__(self, spacy=True, yake=True, rake=True, gensim=True):
+    def __init__(self, spacy=False, yake=False, rake=False, gensim=False, spacyKe=True):
         SpacyKeywords.__init__(self)
         YakeKeywords.__init__(self)
         RakeKeywords.__init__(self)
         GensimKeywords.__init__(self)
+        SpacyKeKeywords.__init__(self)
         self.keyword_extractors = list()
         if spacy:
             self.keyword_extractors.append(self.spacyKeywords)
@@ -79,9 +100,9 @@ class Keywords(SpacyKeywords, YakeKeywords, RakeKeywords, GensimKeywords):
             self.keyword_extractors.append(self.rakeKeywords)
         if gensim:
             self.keyword_extractors.append(self.gensimKeywords)
-        assert len(self.keyword_extractors) > 0, "You need to use atleast one keyword extractor"
-
-
+        if spacyKe:
+            self.keyword_extractors.append(self.spacyKeKeywords)
+        assert len(self.keyword_extractors) >0, "You need to use atleast one keyword extractor"
 
     @staticmethod
     def _unique(words: List[str])->List[str]:
@@ -94,7 +115,19 @@ class Keywords(SpacyKeywords, YakeKeywords, RakeKeywords, GensimKeywords):
     def keywords(self, text: str)->List[str]:
         """Get Keywords"""
         listOfKeywordLists = [extractor(text) for extractor in self.keyword_extractors]
-        return self._unique([l for KeywordList in listOfKeywordLists for l in KeywordList])
+        words = self._unique([l for KeywordList in listOfKeywordLists for l in KeywordList])
+        words.sort(key=lambda x: len(x.split()), reverse=True)
+        print(words)
+        return words
+
+
+    @staticmethod
+    def _unique(words: List[str])->List[str]:
+        """Get unique keywords"""
+        return list(set(words))
+    @staticmethod
+    def _flatten(ListOfList: List[List[str]])->List[str]:
+        return [s for List in ListOfList for s in List]
 
 class MarkKeywords:
     def __init__(self):
@@ -184,9 +217,9 @@ class MarkKeywords:
 
 class MarkText(Keywords, MarkKeywords):
     """Find keywords in text and mark them"""
-    def __init__(self, spacy=True, yake=True, rake=True, gensim=True):
+    def __init__(self, spacy=False, yake=False, rake=False, gensim=False, spacyKe=True):
         MarkKeywords.__init__(self)
-        Keywords.__init__(self, spacy, yake, rake, gensim)
+        Keywords.__init__(self, spacy, yake, rake, gensim, spacyKe)
 
     def markText(self, text):
         """Mark text"""

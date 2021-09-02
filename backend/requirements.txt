@@ -8,3 +8,4 @@ pdfkit
 rake-nltk
 yake
 gensim==3.8.3
+spacy_ke
