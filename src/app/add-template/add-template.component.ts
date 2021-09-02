@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { defaultStyle, keywordSelector } from './../constants';
 import { pdfTemplateOutput, URLS, keyWord } from './../latex2pdfInterface';
 import { FlaskService } from '../services/flask.service';
@@ -9,6 +9,8 @@ import { Editor, Toolbar } from 'ngx-editor';
 import { faHighlighter } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 import { UrlKeeperService } from '../services/url-keeper.service';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ExplanationComponent } from './explanation/explanation.component';
 
 
 @Component({
@@ -41,7 +43,9 @@ export class AddTemplateComponent implements OnInit {
   constructor(private flask: FlaskService,
               private urlHandler: UrlHandlerService,
               public wordProcessor : WordProcessorService,
-              private router : Router, private urlKepeer: UrlKeeperService) { }
+              private router : Router, private urlKepeer: UrlKeeperService, 
+              public dialog: MatDialog,
+              public ngZone : NgZone) { }
   
   ngAfterViewInit()  {
     this.setNgxEditorButtonText()
@@ -51,7 +55,7 @@ export class AddTemplateComponent implements OnInit {
     setTimeout(() => {
       var node = document.querySelector('[title="Bold"]') as HTMLElement;
     node.innerHTML = "Mark keyword"
-    }, 20)
+    }, 5)
     
   }
   ngOnInit(): void {
@@ -173,6 +177,14 @@ export class AddTemplateComponent implements OnInit {
     this.editor.destroy();
   }
 
-  
+  openDialog() {
 
+    this.ngZone.run(() => {
+    let dialogRef = this.dialog.open(ExplanationComponent);
+    })
+
+    /* dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    }); */
+  }
 }
