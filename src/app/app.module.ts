@@ -28,6 +28,9 @@ import { PdfZoomComponent } from './edit-pdf/pdf-zoom/pdf-zoom.component';
 import { StylePanelComponent } from './edit-pdf/style-panel/style-panel.component';
 import { WorkingPanelComponent } from './edit-pdf/working-panel/working-panel.component';
 import { NgxEditorModule } from 'ngx-editor';
+import {MatDialogModule} from '@angular/material/dialog';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 
 
 
@@ -39,9 +42,10 @@ import { NgxEditorModule } from 'ngx-editor';
     KeyWordsComponent,
     PdfZoomComponent,
     StylePanelComponent,
-    WorkingPanelComponent
+    WorkingPanelComponent,
   ],
   imports: [
+    MatDialogModule,
     NgxEditorModule,
     FontAwesomeModule,
     AngularResizedEventModule,
@@ -61,7 +65,8 @@ import { NgxEditorModule } from 'ngx-editor';
     TextFieldModule,
     HttpClientModule,
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]

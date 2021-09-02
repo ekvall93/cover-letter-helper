@@ -10,7 +10,7 @@ import { faHighlighter } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 import { UrlKeeperService } from '../services/url-keeper.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ExplanationComponent } from './explanation/explanation.component';
+import { NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -32,6 +32,8 @@ export class AddTemplateComponent implements OnInit {
   faHighlighter=faHighlighter;
   showCoverletter : boolean = true
 
+  closeResult: string;
+
   toolbarCoverletter: Toolbar = [
     ["bold"]
   ];
@@ -45,10 +47,12 @@ export class AddTemplateComponent implements OnInit {
               public wordProcessor : WordProcessorService,
               private router : Router, private urlKepeer: UrlKeeperService, 
               public dialog: MatDialog,
-              public ngZone : NgZone) { }
+              readonly ngZone : NgZone,
+              private modalService: NgbModal) { }
   
   ngAfterViewInit()  {
-    this.setNgxEditorButtonText()
+    var node = document.querySelector('[title="Bold"]') as HTMLElement;
+    node.innerHTML = "Mark keyword"
   }
 
   setNgxEditorButtonText() {
@@ -177,14 +181,22 @@ export class AddTemplateComponent implements OnInit {
     this.editor.destroy();
   }
 
-  openDialog() {
 
-    this.ngZone.run(() => {
-    let dialogRef = this.dialog.open(ExplanationComponent);
-    })
+  open(content) {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
 
-    /* dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    }); */
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return  `with: ${reason}`;
+    }
   }
 }

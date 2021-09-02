@@ -1,7 +1,26 @@
 
+
+
+   
+<ng-template #mymodal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Explanation</h4>
+  </div>
+  <div class="modal-body">
+    <p>1. Add your cover template in the "Cover Letter"-tab. Mark the keywords which you have to change for the specific application. There is an example cover letter attached with marked keywords. Try the example, or remove it and add yours, and add some keywords.</p>
+    <p>2. Then click on the "Application"-tab, and copy-paste the work described here. There is an example job description attached here, copy-pasted from LinkedIn. Try this out, or remove it and add yours. We will find keywords in the job description which you can use in your cover letter.</p>
+    <p>3. When finished, press "Create PDF" at the bottom of the page to edit your cover letter.
+    </p>
+    <p><b>Nota bene</b>: This software only supports English, so if the job description is in another language, we recommend running it through Google Translate and then copy-paste it here.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-light" (click)="modal.close('Save click')">Ok</button>
+  </div>
+</ng-template>
+
 <div class="container" id="main" style="height:100%;min-height:100%;overflow: scroll !important">
   <div>
-    <div fxLayout="row" fxLayoutAlign="space-around center" style="width:30%; margin:auto;background-color: rgba(44, 72, 120, 0.2);height:50px" class="roundCorner2">
+    <div fxLayout="row" fxLayoutAlign="space-around center" style="width:400px; margin:auto;background-color: rgba(44, 72, 120, 0.2);height:50px" class="roundCorner2">
       <div>
         <button mat-raised-button [color]="!showCoverletter ? 'terran' : 'off'" [disabled]="showCoverletter" (click)="showCoverletter=!showCoverletter; setNgxEditorButtonText()" color="terran">Cover Letter</button>
       </div>
@@ -9,7 +28,7 @@
         <button mat-raised-button [color]="showCoverletter ? 'terran' : 'off'" [disabled]="!showCoverletter" (click)="showCoverletter=!showCoverletter" color="terran">Application</button>
       </div>
       <div>
-        <button mat-raised-button color="terran" (click)="openDialog()">Questions?</button>
+        <button mat-raised-button color="terran" (click)="open(mymodal)">Questions?</button>
       </div>
     </div>
 

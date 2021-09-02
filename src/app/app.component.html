@@ -12,8 +12,16 @@
 
         </div>
     </div>
-    <div fxFlex="78" class="roundCorner">
-        <router-outlet></router-outlet>
+    <div *ngIf="deviceInfo" fxFlex="78" class="roundCorner">
+        <router-outlet *ngIf="isDesktopDevice;else userWarning"></router-outlet>
+        <ng-template #userWarning>
+            <div fxLayout="column" style="width: 100%;height: 100%;" fxLayoutAlign="center center" >
+
+                <div style="color: white; border-radius: 25px;text-align: center;width:300px;background-color: rgba(44, 72, 120, 0.8);">
+                    <p>For a better experience, please come back on a desktop.</p>
+                </div>
+            </div>
+        </ng-template>
     </div>
     <div fxFlex="7" id="footerContent2">
         <span>Copyright © terran.ai 2021 | All rights reserved</span>
