@@ -283,7 +283,7 @@ class Latex2PDF(TextHandler, FileHandler):
     """Update styles in latex template, and save it for future updates"""
     projectDir = oldPaths.projectDir
     templateText = self.readFile(projectDir, "templateText.txt")
-    template = self.addMainText(templateText, styles)
+    template = self.addMainTextTemplate(templateText, styles)
     self.writeFile(projectDir, "template.txt", template)
 
   def updateProject(self, keyWordOptions:KeyWordOptions, keyWords: KeyWords, oldPaths: PathHandler)->Dict[str, pathlib.Path]:
