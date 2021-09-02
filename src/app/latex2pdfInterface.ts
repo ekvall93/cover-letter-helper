@@ -17,6 +17,8 @@ export interface URLS {
   projectPathToDelete: string;
   PDFDir: string;
   projectDir: string
+  applicationPDF: string
+  applicationPDFPath: string;
 }
 
 
