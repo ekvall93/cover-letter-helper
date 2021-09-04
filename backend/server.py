@@ -18,6 +18,10 @@ api.add_resource(Latex2PDFHandler, '/api/Latex2PDFHandler/')
 
 fileHandler = FileHandler()
 
+@app.route("/")
+def hello():
+    return "<h1 style='color:blue'>Hello There!</h1>"
+
 @app.route('/api/readPDF/<path:path>')
 def readPDF(path)->IO[bytes]:
   """Send PDF file to user"""
