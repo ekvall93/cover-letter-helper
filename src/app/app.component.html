@@ -17,18 +17,26 @@
         <ng-template #userWarning>
             <div fxLayout="column" style="width: 100%;height: 100%;" fxLayoutAlign="center center" >
 
-                <div style="color: white; border-radius: 25px;text-align: center;width:300px;background-color: rgba(44, 72, 120, 0.8);">
-                    <p>For a better experience, please come back on a desktop.</p>
+                <div fxLayout="column" fxLayoutAlign="center center" style="color: white; border-radius: 25px;text-align: center;width:300px;height:150px;background-color: rgba(44, 72, 120, 0.8);box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24);">
+                    <p style="margin:10px">Please come back on a desktop to create your cover letters. 
+                    <p style="margin:10px">Best regards,</p>
+                    <p style="margin:10px">The Terran Team</p>
                 </div>
             </div>
         </ng-template>
     </div>
-    <div fxFlex="7" id="footerContent2">
+
+    <div *ngIf="isDesktopDevice" fxFlex="7" id="footerContent2">
         <div fxLayout="column" fxLayoutAlign="center center" >
             <p style="margin-bottom: 0px;margin-top:3px">Copyright © generic-text.com 2021 | All rights reserved | A Terran software</p>
             <p style="font-size:12px;margin-bottom: 0px;"><i>Credtit: Jackie Umutesi</i></p>
         </div>
-        
-        
+    </div>
+    <div *ngIf="!isDesktopDevice" fxFlex="10" id="footerContent2">
+        <div fxLayout="column" fxLayoutAlign="center center" >
+            <p style="font-size:13px;margin-bottom: 0px;margin-top:3px">Copyright © generic-text.com 2021 | All rights reserved</p>
+            <p style="font-size:13px;margin-bottom: 0px;margin-top:3px">A Terran software</p>
+            <p style="font-size:10px;margin-bottom: 0px;"><i>Credtit: Jackie Umutesi</i></p>
+        </div>
     </div>
 </div>
