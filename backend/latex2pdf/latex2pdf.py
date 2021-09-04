@@ -271,7 +271,7 @@ class Latex2PDF(TextHandler, FileHandler):
       def remove_tags(text):
         return TAG_RE.sub('', text)
       applicationText = remove_tags(applicationText)
-
+      
 
       applicationText = MarkText().markText(applicationText)
       applicationText = self.preProcessTemplate(applicationText)
