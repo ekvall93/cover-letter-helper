@@ -267,6 +267,12 @@ class Latex2PDF(TextHandler, FileHandler):
       self.createTemplatePDFFromLatex(Path, template)
 
 
+      TAG_RE = re.compile(r'<[^>]+>')
+      def remove_tags(text):
+        return TAG_RE.sub('', text)
+      applicationText = remove_tags(applicationText)
+
+
       applicationText = MarkText().markText(applicationText)
       applicationText = self.preProcessTemplate(applicationText)
       applicationText = applicationText.replace(startTag, "\hl{").replace(endTag, "}")
